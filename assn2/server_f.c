@@ -141,6 +141,7 @@ int main(int argc, char * argv[])
 			if (getLine == NULL) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
+				logBadRequest(getIPString(&client), getLine);
 			} else {
 				/* GET is good. Try reading file & sending */
 				fp = fopen(fName, "r");
