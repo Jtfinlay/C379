@@ -228,7 +228,7 @@ int sendFile(FILE * fp, int clientsd) {
 
 
 void writeLog(char * ip, char * get, char * req) {
-	char buf[80+strlen(get)];
+	char buf[250+strlen(get)];
 	
 	strlcpy(buf, getTime());
 	printf("Meow?: %s\n", buf);
