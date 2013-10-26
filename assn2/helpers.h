@@ -116,7 +116,7 @@ void sendOK(int clientsd, int fileLen) {
 	strlcpy(buf, "HTTP/1.1 200 OK\n");
 	strcat(buf, "Date: ");
 	strcat(buf, getTime());
-	strcat(buf, "Content-Type: text/html\n");
+	strcat(buf, "\nContent-Type: text/html\n");
 	strcat(buf, "Content-Length: ");
 	strcat(buf, length);
 	strcat(buf, "\n\n");
@@ -137,7 +137,7 @@ void sendError(int clientsd, char * title, char * content) {
 	strcat(buf, title);
 	strcat(buf, "Date: ");
 	strcat(buf, getTime());
-	strcat(buf, "Content-Type: text/html\n");
+	strcat(buf, "\nContent-Type: text/html\n");
 	strcat(buf, "Content-Length: ");
 	strcat(buf, length);
 	strcat(buf, "\n\n");
