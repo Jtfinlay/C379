@@ -64,8 +64,8 @@ int writeToClient(int clientsd, char * buff) {
 	}
 	return written;
 }
-char* checkGET(char * buff, char * fileName) {
-	char *backup, *word, *line, *lptr, *wptr;
+int checkGET(char * buff, char * fileName, char * firstLine) {
+	char *word, *line, *lptr, *wptr;
 
 	wptr = NULL;
 	lptr = NULL;	
@@ -73,25 +73,25 @@ char* checkGET(char * buff, char * fileName) {
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
 	
 	line = strtok_r(buff, "\n", &lptr);
-	backup = strndup(line, strlen(line));
+	firstLine = strndup(line, strlen(line));
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
 		free(buff);
-		return NULL;
+		return 0;
 	}
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL) {
 		free(buff);
-		return NULL;
+		return 0;
 	}
 	strlcpy(fileName, word);
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
 		free(buff);
-		return NULL;	
+		return 0;	
 	}
 	
 	/* Ensure there is a blank line */
@@ -99,13 +99,13 @@ char* checkGET(char * buff, char * fileName) {
 	while (line != NULL) {
 		if (strlen(line) == 1) {
 			free(buff);
-			return backup;
+			return 1;
 		}
 		line = strtok_r(NULL, "\n", &lptr);
 	}
 	printf("No newline!\n");
 	free(buff);
-	return NULL;
+	return 0;
 }
 void sendOK(int clientsd, int fileLen) {
 	char buf[128], length[20];
@@ -246,6 +246,8 @@ void writeLog(char * ip, char * get, char * req) {
 		err(0, "log fopen");
 	fputs(buf, f);
 	fclose(f);
+	
+	free(ip);
 	
 }
 void logOK(char * ip, char * get, int iWrote, int iTotal) {

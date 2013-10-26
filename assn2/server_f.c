@@ -107,7 +107,6 @@ int main(int argc, char * argv[])
 		err(1, "sigaction failed");
 
 	/* main loop. Accept connections and do stuff */
-	printf("Server up and listening on port %u\n", port);
 	for(;;) {
 		int clientsd;
 		ssize_t written, w;
@@ -124,21 +123,20 @@ int main(int argc, char * argv[])
 
 		if (pid == 0) {
 			char * getLine;
-			int written;
+			int valid, written;
 			long lSize;
 			FILE * fp;
 			
 			/* Parse GET */
-			//outbuff = malloc(128*sizeof(char));
 			tmp = malloc(128*sizeof(char));
 			if (tmp == NULL)
 				internalError(&client, "malloc failed", NULL);
 			inbuff = tmp;
 			readSocket(clientsd, inbuff, 128);
 			
-			getLine = checkGET(inbuff, fName);
+			valid = checkGET(inbuff, fName, getLine);
 
-			if (getLine == NULL) {
+			if (valid == 0) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
 				logBadRequest(getIPString(&client), getLine);
@@ -168,10 +166,8 @@ int main(int argc, char * argv[])
 
 			/* Clean up */
 			free(getLine);
-			//free(outbuff);
 			getLine = NULL;
 			inbuff = NULL;
-			//outbuff = NULL;
 
 			exit(0);
 		}
