@@ -136,7 +136,7 @@ int main(int argc, char * argv[])
 			
 			printf("Before: '%s'\n", inbuff);
 			valid = checkGET(inbuff, fName);
-			printf("After: '&s'\n", inbuff);
+			printf("After: '%s'\n", inbuff);
 			if (valid == 0) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);

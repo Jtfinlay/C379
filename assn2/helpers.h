@@ -70,8 +70,6 @@ int checkGET(char * buff, char * fileName) {
 	wptr = NULL;
 	lptr = NULL;
 	
-	printf("%s\n", buff);
-	
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
 	
 	line = strtok_r(buff, "\n", &lptr);
