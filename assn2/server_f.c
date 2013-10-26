@@ -141,7 +141,7 @@ int main(int argc, char * argv[])
 			if (getLine == NULL) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
-			} else if (valid == 1) {
+			} else {
 				/* GET is good. Try reading file & sending */
 				fp = fopen(fName, "r");
 				if (fp == NULL) {

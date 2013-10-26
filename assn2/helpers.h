@@ -74,6 +74,7 @@ char* checkGET(char * buff, char * fileName) {
 	
 	line = strtok_r(buff, "\n", &lptr);
 	strlcpy(backup, line, strlen(line));
+	printf("line: '%s'\n", backup);
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
