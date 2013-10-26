@@ -32,10 +32,10 @@ char * getIPString(struct sockaddr_in * client) {
 }
 
 char* getTime() {
-	char buffer[40];
+	char buffer[80];
 	time_t t = time(NULL);
 	
-	strftime(buffer, "%a, %d %b %Y %X GMT", gmtime(&t));
+	strftime(buffer, 80,"%a, %d %b %Y %X GMT", gmtime(&t));
 	
 	return buffer;
 }
