@@ -74,7 +74,6 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	
 	line = strtok_r(buff, "\n", &lptr);
 	firstLine = strndup(line, strlen(line));
-	printf("firstLine: '%s'\n", firstLine);
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
@@ -229,7 +228,7 @@ int sendFile(FILE * fp, int clientsd) {
 
 
 void writeLog(char * ip, char * get, char * req) {
-	char buf[250+strlen(get)];
+	char buf[500];
 	FILE *f;
 	printf("1\n");
 	printf("%s\n", get);
