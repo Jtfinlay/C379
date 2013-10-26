@@ -73,13 +73,12 @@ char* checkGET(char * buff, char * fileName) {
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
 	
 	line = strtok_r(buff, "\n", &lptr);
-	strlcpy(backup, line, strlen(line));
+	backup = strndup(line);
 	printf("line: '%s'\n", backup);
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
 		free(buff);
-		buff = backup;
 		return NULL;
 	}
 	
