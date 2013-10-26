@@ -26,7 +26,6 @@ char * getIPString(struct sockaddr_in * client) {
 		(int)((client->sin_addr.s_addr&0xFF00)>>8),
 		(int)((client->sin_addr.s_addr&0xFF0000)>>16),
 		(int)((client->sin_addr.s_addr&0xFF000000)>>24));
-//		(int)((*client.sin_addr.s_addr&0xFF000000)>>24));
 		
 	tmp = NULL;
 	return buff;
