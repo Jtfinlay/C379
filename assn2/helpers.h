@@ -230,26 +230,18 @@ int sendFile(FILE * fp, int clientsd) {
 void writeLog(char * ip, char * get, char * req) {
 	char buf[250+strlen(get)];
 	
+	int i;
+
 	strlcpy(buf, getTime());
-	printf("Meow?: %s\n", buf);
 	strcat(buf, "\t");
-	printf("Meow?: %s\n", buf);
 	strcat(buf, ip);
-	printf("Meow?: %s\n", buf);
 	strcat(buf, "\t");
-	printf("Meow?: %s\n", buf);
-	strcat(buf, get);
-	printf("Meow?: %s\n", buf);
+	strncat(buf, get, strlen(get)-1);
 	strcat(buf, "\t");
-	printf("Meow?: %s\n", buf);
 	strcat(buf, req);
-	printf("Meow?: %s\n", buf);
 	strcat(buf, "\n");
 	
-	
 	printf("Writing: %s\n", buf);
-	
-	
 	
 }
 void logOK(char * ip, char * get, int iWrote, int iTotal) {
