@@ -122,7 +122,8 @@ int main(int argc, char * argv[])
 			internalError((struct sockaddr *)&client, "fork failed", NULL);		
 
 		if (pid == 0) {
-			int valid, written;
+			char * getLine;
+			int written;
 			long lSize;
 			FILE * fp;
 			
@@ -135,9 +136,9 @@ int main(int argc, char * argv[])
 			readSocket(clientsd, inbuff, 128);
 			
 			printf("Before: '%s'\n", inbuff);
-			valid = checkGET(inbuff, fName);
-			printf("After: '%s'\n", inbuff);
-			if (valid == 0) {
+			getLine = checkGET(inbuff, fName);
+			printf("After: '%s'\n", getLine);
+			if (getLine == NULL) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
 			} else if (valid == 1) {
@@ -146,12 +147,12 @@ int main(int argc, char * argv[])
 				if (fp == NULL) {
 					if (errno == ENOENT) {
 						sendNotFoundError(clientsd);
-						logNotFound(getIPString(&client), inbuff);
+						logNotFound(getIPString(&client), getLine);
 					} else if (errno == EACCES) {
 						sendForbiddenError(clientsd);
-						logForbidden(getIPString(&client), inbuff);
+						logForbidden(getIPString(&client), getLine);
 					} else 
-						internalError(&client, "fopen failed", inbuff);
+						internalError(&client, "fopen failed", getLine);
 				} else {
 					/* get file size */
 					fseek(fp, sizeof(char), SEEK_END);
@@ -160,13 +161,14 @@ int main(int argc, char * argv[])
 					/* send OK and file */
 					sendOK(clientsd, lSize);
 					written = sendFile(fp, clientsd);
-					logOK(getIPString(&client), inbuff, written, lSize-1);
+					logOK(getIPString(&client), getLine, written, lSize-1);
 				}		
 			}
 
 			/* Clean up */
-			free(inbuff);
+			free(getLine);
 			//free(outbuff);
+			getLine = NULL;
 			inbuff = NULL;
 			//outbuff = NULL;
 
