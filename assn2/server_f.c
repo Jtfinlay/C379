@@ -133,10 +133,13 @@ int main(int argc, char * argv[])
 				internalError(&client, "malloc failed", NULL);
 			inbuff = tmp;
 			readSocket(clientsd, inbuff, 128);
+
+			tmp = malloc(128*sizeof(char));
+			if (tmp == NULL)
+				internalError(&client, "malloc failed", NULL);
+			getLine = tmp;
 			
 			valid = checkGET(inbuff, fName, getLine);
-			printf("'%d'", strlen(getLine));
-			printf("'%s'", getLine);
 			if (valid == 0) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);

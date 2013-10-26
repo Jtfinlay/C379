@@ -73,7 +73,9 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
 	
 	line = strtok_r(buff, "\n", &lptr);
-	firstLine = strndup(line, strlen(line));
+	strlcpy(firstLine, line);
+
+	int i;
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
@@ -103,7 +105,6 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		}
 		line = strtok_r(NULL, "\n", &lptr);
 	}
-	printf("No newline!\n");
 	free(buff);
 	return 0;
 }
