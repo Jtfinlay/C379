@@ -231,17 +231,24 @@ void writeLog(char * ip, char * get, char * req) {
 	char buf[80+strlen(get)];
 	
 	strlcpy(buf, getTime());
+	printf("Meow?: %s\n", buf);
 	strcat(buf, "\t");
+	printf("Meow?: %s\n", buf);
 	strcat(buf, ip);
+	printf("Meow?: %s\n", buf);
 	strcat(buf, "\t");
+	printf("Meow?: %s\n", buf);
 	strcat(buf, get);
+	printf("Meow?: %s\n", buf);
 	strcat(buf, "\t");
+	printf("Meow?: %s\n", buf);
 	strcat(buf, req);
+	printf("Meow?: %s\n", buf);
 	strcat(buf, "\n");
 	
-	fflush(stdout);
+	
 	printf("Writing: %s\n", buf);
-	fflush(stdout);
+	
 	
 	
 }
