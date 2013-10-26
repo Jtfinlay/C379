@@ -135,9 +135,8 @@ int main(int argc, char * argv[])
 			inbuff = tmp;
 			readSocket(clientsd, inbuff, 128);
 			
-			printf("Before: '%s'\n", inbuff);
 			getLine = checkGET(inbuff, fName);
-			printf("After: '%s'\n", getLine);
+
 			if (getLine == NULL) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
