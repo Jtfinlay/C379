@@ -101,7 +101,6 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	}
 	
 	/* Ensure there is a blank line */
-	line = strtok_r(NULL, "\n", &lptr);
 	while (line != NULL) {
 		if (strlen(line) == 1) {
 			free(buff);
@@ -117,9 +116,9 @@ void sendOK(int clientsd, int fileLen) {
 	
 	sprintf(length, "%d", fileLen);
 	
+	printf("OK!\n");
 	getTime(time);
 
-	printf("OK!\n");
 	strlcpy(buf, "HTTP/1.1 200 OK\n");
 	strcat(buf, "Date: ");
 	strcat(buf, time);
