@@ -43,18 +43,77 @@ static void readSocket(int sockfd, char * buff, size_t bufflen) {
 
 	// NOTE -> Might not buffer everything. Probably should fix that.
 }
+void *ThreadWork(void * threadarg)
+{
+	char * getLine;
+	int valid, written;
+	long lSize;
+	FILE * fp;
+	struct sockaddr * client;
+			
+	client = (struct sockaddr *) threadarg;
+	
+	/* Parse GET */
+	tmp = malloc(128*sizeof(char));
+	if (tmp == NULL)
+		internalError(&client, "malloc failed", NULL);
+	inbuff = tmp;
+	readSocket(clientsd, inbuff, 128);
+
+	tmp = malloc(128*sizeof(char));
+	if (tmp == NULL)
+		internalError(&client, "malloc failed", NULL);
+	getLine = tmp;
+			
+	valid = checkGET(inbuff, fName, getLine);
+
+	if (valid == 0) {
+		/* BAD REQUEST */
+		sendBadRequestError(clientsd);
+		logBadRequest(getIPString(&client), getLine);
+	} else {
+		/* GET is good. Try reading file & sending */
+		fp = fopen(fName, "r");
+		if (fp == NULL) {
+			if (errno == ENOENT) {
+				sendNotFoundError(clientsd);
+				logNotFound(getIPString(&client), getLine);
+			} else if (errno == EACCES) {
+				sendForbiddenError(clientsd);
+				logForbidden(getIPString(&client), getLine);
+			} else 
+				internalError(&client, "fopen failed", getLine);
+		} else {
+			/* get file size */
+			fseek(fp, sizeof(char), SEEK_END);
+			lSize = ftell(fp);
+			rewind(fp);
+			/* send OK and file */
+			sendOK(clientsd, lSize);
+			written = sendFile(fp, clientsd);
+			logOK(getIPString(&client), getLine, written, lSize-1);
+			}		
+		}
+
+	/* Clean up */
+	//free(getLine);
+	getLine = NULL;
+	inbuff = NULL;
+
+	close(clientsd);
+	pthread_exit(NULL);
+}
 int main(int argc, char * argv[])
 {
 	struct sockaddr_in sockname, client;
 	struct sigaction sa;
 	char *ep, *inbuff, *tmp;
 	char outbuff[256], fName[256];
-
 	int clientlen, sd;
 
 	u_short port;
 	u_long p;
-	pid_t pid;
+	int rc, t;
 	
 	daemon(1,1);
 
@@ -119,67 +178,11 @@ int main(int argc, char * argv[])
 		if (clientsd == -1)
 			err(1, "accept failed");
 		
-		/* fork child to deal with each connection */
-		pid = fork();
-		if (pid == -1)
-			internalError((struct sockaddr *)&client, "fork failed", NULL);		
-
-		if (pid == 0) {
-			char * getLine;
-			int valid, written;
-			long lSize;
-			FILE * fp;
-			
-			/* Parse GET */
-			tmp = malloc(128*sizeof(char));
-			if (tmp == NULL)
-				internalError(&client, "malloc failed", NULL);
-			inbuff = tmp;
-			readSocket(clientsd, inbuff, 128);
-
-			tmp = malloc(128*sizeof(char));
-			if (tmp == NULL)
-				internalError(&client, "malloc failed", NULL);
-			getLine = tmp;
-			
-			valid = checkGET(inbuff, fName, getLine);
-
-			if (valid == 0) {
-				/* BAD REQUEST */
-				sendBadRequestError(clientsd);
-				logBadRequest(getIPString(&client), getLine);
-			} else {
-				/* GET is good. Try reading file & sending */
-				fp = fopen(fName, "r");
-				if (fp == NULL) {
-					if (errno == ENOENT) {
-						sendNotFoundError(clientsd);
-						logNotFound(getIPString(&client), getLine);
-					} else if (errno == EACCES) {
-						sendForbiddenError(clientsd);
-						logForbidden(getIPString(&client), getLine);
-					} else 
-						internalError(&client, "fopen failed", getLine);
-				} else {
-					/* get file size */
-					fseek(fp, sizeof(char), SEEK_END);
-					lSize = ftell(fp);
-					rewind(fp);
-					/* send OK and file */
-					sendOK(clientsd, lSize);
-					written = sendFile(fp, clientsd);
-					logOK(getIPString(&client), getLine, written, lSize-1);
-				}		
-			}
-
-			/* Clean up */
-			//free(getLine);
-			getLine = NULL;
-			inbuff = NULL;
-
-			exit(0);
-		}
-		close(clientsd);
+		/* create thread to deal with each connection */
+		rc = pthread_create(NULL, NULL, ThreadWork, 0, (void *)
+					&client);
+		if (rc)
+			internalError((struct sockaddr *)&client, "thread failed", NULL);
 	}
 }
 

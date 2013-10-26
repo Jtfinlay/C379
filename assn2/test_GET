@@ -1,4 +1,4 @@
-GET helpers.h HTTP/1.1
+GET /log HTTP/1.1
 From: someuser@somewhere.org
 User-Agent: Bloatzilla/7.0
 
