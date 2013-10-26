@@ -230,7 +230,9 @@ int sendFile(FILE * fp, int clientsd) {
 void writeLog(char * ip, char * get, char * req) {
 	char buf[250+strlen(get)];
 	FILE *f;
-	
+	printf("1\n");
+	printf("%s\n", get);
+	printf("2\n");
 	strlcpy(buf, getTime());
 	strcat(buf, "\t");
 	strcat(buf, ip);
