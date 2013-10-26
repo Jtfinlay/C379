@@ -88,7 +88,11 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		free(buff);
 		return 0;
 	}
-	strlcpy(fileName, word);
+	if (fileName[0] != '/') {
+		free(buff);
+		return 0;
+	}
+	fileName++;
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
@@ -207,10 +211,7 @@ int sendFile(FILE * fp, int clientsd) {
 	int counter;
 	char buff[buffSize+1];
 	int r;
-	/* 
-	 * NOTE - use fseek to get file size
-	 * http://www.cplusplus.com/reference/cstdio/fread/
-	 */
+	
 	memset(buff, '\0', (buffSize+1)*sizeof(char));
 	r = buffSize;
 	counter = 0;
@@ -229,11 +230,8 @@ int sendFile(FILE * fp, int clientsd) {
 
 
 void writeLog(char * ip, char * get, char * req) {
-	char buf[500];
+	char buf[150+strlen(get)];
 	FILE *f;
-	printf("1\n");
-	printf("%s\n", get);
-	printf("2\n");
 	strlcpy(buf, getTime());
 	strcat(buf, "\t");
 	strcat(buf, ip);

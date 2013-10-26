@@ -54,6 +54,8 @@ int main(int argc, char * argv[])
 	u_short port;
 	u_long p;
 	pid_t pid;
+	
+	daemon();
 
 	/* check params */
 	if (argc != 4)
