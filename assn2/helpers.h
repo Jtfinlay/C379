@@ -76,17 +76,26 @@ int checkGET(char * buff, char * fileName) {
 	line = strtok_r(buff, "\n", &lptr);
 	
 	word = strtok_r(line, " ", &wptr);
-	if (word == NULL || strncmp(word, "GET", 3) != 0)
+	if (word == NULL || strncmp(word, "GET", 3) != 0) {
+		free(buff);
+		buff = backup;
 		return 0;
+	}
 	
 	word = strtok_r(NULL, " ", &wptr);
-	if (word == NULL)
+	if (word == NULL) {
+		free(buff);
+		buff = backup;	
 		return 0;
+	}
 	strlcpy(fileName, word);
 	
 	word = strtok_r(NULL, " ", &wptr);
-	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0)
+	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
+		free(buff);
+		buff = backup;
 		return 0;	
+	}
 	
 	/* Ensure there is a blank line */
 	line = strtok_r(NULL, "\n", &lptr);
