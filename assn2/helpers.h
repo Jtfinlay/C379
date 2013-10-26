@@ -32,8 +32,12 @@ char * getIPString(struct sockaddr_in * client) {
 }
 
 char* getTime() {
+	char buffer[40];
 	time_t t = time(NULL);
-	return asctime(gmtime(&t));
+	
+	strftime(buffer, "%a, %d %b %Y %X GMT", gmtime(&t));
+	
+	return buffer;
 }
 void internalError(struct sockaddr_in * client, char * error, char * get) {
 	char * ip;
