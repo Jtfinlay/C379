@@ -160,7 +160,7 @@ int main(int argc, char * argv[])
 					/* send OK and file */
 					sendOK(clientsd, lSize);
 					written = sendFile(fp, clientsd);
-					logOK(getIPString(&client), inbuff, written, lSize);
+					logOK(getIPString(&client), inbuff, written, lSize-1);
 				}		
 			}
 
