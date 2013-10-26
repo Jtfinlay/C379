@@ -65,10 +65,11 @@ int writeToClient(int clientsd, char * buff) {
 	return written;
 }
 int checkGET(char * buff, char * fileName) {
-	char *word, *line, *lptr, *wptr;
+	char *backup, *word, *line, *lptr, *wptr;
 
 	wptr = NULL;
 	lptr = NULL;
+	strlcpy(backup, buff, strlen(buff));	
 	
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
 	
@@ -90,11 +91,16 @@ int checkGET(char * buff, char * fileName) {
 	/* Ensure there is a blank line */
 	line = strtok_r(NULL, "\n", &lptr);
 	while (line != NULL) {
-		if (strlen(line) == 1) /* 1 because of '\0' in strtok */
+		if (strlen(line) == 1) {
+			free(buff);
+			buff = backup;
 			return 1;
+		}
 		line = strtok_r(NULL, "\n", &lptr);
 	}
 	printf("No newline!\n");
+	free(buff);
+	buff = backup;
 	return 0;
 }
 void sendOK(int clientsd, int fileLen) {
