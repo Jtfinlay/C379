@@ -239,7 +239,9 @@ void writeLog(char * ip, char * get, char * req) {
 	strcat(buf, req);
 	strcat(buf, "\n");
 	
+	fflush(stdout);
 	printf("Writing: %s\n", buf);
+	fflush(stdout);
 	
 	
 }
