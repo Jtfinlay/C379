@@ -31,13 +31,11 @@ char * getIPString(struct sockaddr_in * client) {
 	return buff;
 }
 
-char* getTime() {
-	char buffer[80];
+void getTime(char * buffer) {
 	time_t t = time(NULL);
 	
 	strftime(buffer, 80,"%a, %d %b %Y %X GMT", gmtime(&t));
 	
-	return buffer;
 }
 void internalError(struct sockaddr_in * client, char * error, char * get) {
 	char * ip;
@@ -88,11 +86,13 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		free(buff);
 		return 0;
 	}
+	strlcpy(fileName, word);
 	if (fileName[0] != '/') {
 		free(buff);
 		return 0;
 	}
-	fileName++;
+	memmove(fileName, fileName+1, strlen(fileName+1));
+	fileName[strlen(fileName)-1] = '\0';
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
@@ -113,14 +113,16 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	return 0;
 }
 void sendOK(int clientsd, int fileLen) {
-	char buf[128], length[20];
+	char buf[128], length[20], time[80];
 	
 	sprintf(length, "%d", fileLen);
 	
+	getTime(time);
+
 	printf("OK!\n");
 	strlcpy(buf, "HTTP/1.1 200 OK\n");
 	strcat(buf, "Date: ");
-	strcat(buf, getTime());
+	strcat(buf, time);
 	strcat(buf, "\nContent-Type: text/html\n");
 	strcat(buf, "Content-Length: ");
 	strcat(buf, length);
@@ -129,19 +131,20 @@ void sendOK(int clientsd, int fileLen) {
 	writeToClient(clientsd, buf);
 }
 void sendError(int clientsd, char * title, char * content) {
-	char *buf, *tmp, length[20];
+	char *buf, *tmp, length[20], time[80];
 	tmp = (char*) malloc((128+strlen(content))*sizeof(char));
 	if (tmp == NULL)
 		err(1, "malloc");
 	
 	buf = tmp;
+	getTime(time);
 	
 	sprintf(length, "%d", strlen(content));
 	
 	strlcpy(buf, "HTTP/1.1 ");
 	strcat(buf, title);
 	strcat(buf, "Date: ");
-	strcat(buf, getTime());
+	strcat(buf, time);
 	strcat(buf, "\nContent-Type: text/html\n");
 	strcat(buf, "Content-Length: ");
 	strcat(buf, length);
@@ -232,7 +235,9 @@ int sendFile(FILE * fp, int clientsd) {
 void writeLog(char * ip, char * get, char * req) {
 	char buf[150+strlen(get)];
 	FILE *f;
-	strlcpy(buf, getTime());
+
+	//strlcpy(buf, getTime());
+	getTime(buf);
 	strcat(buf, "\t");
 	strcat(buf, ip);
 	strcat(buf, "\t");

@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
 	u_long p;
 	pid_t pid;
 	
-	daemon();
+	daemon(1,1);
 
 	/* check params */
 	if (argc != 4)
@@ -142,6 +142,7 @@ int main(int argc, char * argv[])
 			getLine = tmp;
 			
 			valid = checkGET(inbuff, fName, getLine);
+
 			if (valid == 0) {
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
