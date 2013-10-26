@@ -257,9 +257,7 @@ void logOK(char * ip, char * get, int iWrote, int iTotal) {
 	char buf[40];
 	
 	sprintf(buf, "200 OK %d/%d", iWrote, iTotal); 
-	printf("Log OK\n");
 	writeLog(ip, get, buf);
-	printf("logged OK\n");
 }
 void logBadRequest(char * ip, char * get) {
 	writeLog(ip, get, "400 Bad Request");
