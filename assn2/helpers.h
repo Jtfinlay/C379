@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <time.h>
 	
-	
+char * LOG_FILE;
 	
 char * getIPString(struct sockaddr_in * client) {
 	char *buff, *tmp;
@@ -229,9 +229,8 @@ int sendFile(FILE * fp, int clientsd) {
 
 void writeLog(char * ip, char * get, char * req) {
 	char buf[250+strlen(get)];
+	FILE *f;
 	
-	int i;
-
 	strlcpy(buf, getTime());
 	strcat(buf, "\t");
 	strcat(buf, ip);
@@ -242,6 +241,11 @@ void writeLog(char * ip, char * get, char * req) {
 	strcat(buf, "\n");
 	
 	printf("Writing: %s\n", buf);
+	f = fopen(LOG_FILE, "a");
+	if (f == NULL)
+		err(0, "log fopen");
+	fputs(buf, f);
+	fclose(f);
 	
 }
 void logOK(char * ip, char * get, int iWrote, int iTotal) {

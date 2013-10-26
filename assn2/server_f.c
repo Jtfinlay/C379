@@ -76,7 +76,8 @@ int main(int argc, char * argv[])
 	if (chdir(argv[2]) == -1)
 		err(1, "chdir failed");
 		
-	/* Ensure argv[3] is a valid directory */
+	/* TODO : Ensure argv[3] is a valid file */
+	LOG_FILE = argv[3];
 
 	/* now safe to do this */
 	port = p;
