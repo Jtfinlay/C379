@@ -134,6 +134,7 @@ int main(int argc, char * argv[])
 			inbuff = tmp;
 			readSocket(clientsd, inbuff, 128);
 			
+			getLine = NULL;
 			valid = checkGET(inbuff, fName, getLine);
 
 			if (valid == 0) {
@@ -165,7 +166,7 @@ int main(int argc, char * argv[])
 			}
 
 			/* Clean up */
-			free(getLine);
+			//free(getLine);
 			getLine = NULL;
 			inbuff = NULL;
 
