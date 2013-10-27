@@ -70,7 +70,7 @@ void selectError(struct con * cp, char * get) {
 	sendGenError(&(cp->sa));
 	
 	if (get != NULL)
-		logInternal(getIPString(client), get);
+		logInternal(getIPString(&(cp->sa)), get);
 	closecon(cp, 0);
 	
 }
