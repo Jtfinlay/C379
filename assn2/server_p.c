@@ -26,6 +26,11 @@
 	#include "helpers.h"
 #endif
 
+struct thread_data
+{
+	int clientsd;
+	struct sockaddr * client;
+};
 static void usage()
 {
 	extern char * __progname;
@@ -46,12 +51,16 @@ static void readSocket(int sockfd, char * buff, size_t bufflen) {
 void *ThreadWork(void * threadarg)
 {
 	char * getLine;
-	int valid, written;
+	int valid, written, clientsd;
 	long lSize;
 	FILE * fp;
 	struct sockaddr * client;
-			
-	client = (struct sockaddr *) threadarg;
+	struct thread_data * data;
+	char fName[256];
+	char *ep, *inbuff, *tmp;
+	data = (struct thread_data *) threadarg;
+	client = data->client;
+	clientsd = data->clientsd;
 	
 	/* Parse GET */
 	tmp = malloc(128*sizeof(char));
@@ -115,7 +124,7 @@ int main(int argc, char * argv[])
 	u_long p;
 	int rc, t;
 	
-	daemon(1,1);
+	//daemon(1,1);
 
 	/* check params */
 	if (argc != 4)
@@ -172,6 +181,7 @@ int main(int argc, char * argv[])
 	for(;;) {
 		int clientsd;
 		ssize_t written, w;
+		struct thread_data * data;
 	
 		clientlen = sizeof(&client);
 		clientsd = accept(sd, (struct sockaddr *)&client, &clientlen);
@@ -179,10 +189,18 @@ int main(int argc, char * argv[])
 			err(1, "accept failed");
 		
 		/* create thread to deal with each connection */
-		rc = pthread_create(NULL, NULL, ThreadWork, 0, (void *)
-					&client);
+		data = (struct thread_data *) malloc(sizeof(struct thread_data));	
+		if (data == NULL)
+			internalError((struct sockaddr *)&client, 
+				"malloc failed", NULL);
+		data->clientsd = clientsd;
+		data->client = &client;
+		pthread_t thread;
+		rc = pthread_create(&thread, NULL, ThreadWork, (void *)
+			data);
 		if (rc)
-			internalError((struct sockaddr *)&client, "thread failed", NULL);
+			internalError((struct sockaddr *)&client, 
+				"thread failed", NULL);
 	}
 }
 
