@@ -35,6 +35,12 @@ struct con {
 	char *bp;	/* where we are in the buffer */
 	size_t bs;	/* total size of the buffer */
 	size_t bl;	/* how much we have left to read/write */
+	struct reply re; /* reply string */
+};
+struct reply {
+	char *buf; /* buffer to store the characters in */
+	char *bp; /* where we are in buffer */
+	size_t bs; /*total size of buffer */
 };
 
 #define MAXCONN 256 /* Max # of connections possible */
@@ -87,8 +93,17 @@ void closecon(struct con *cp, int initflag)
 void handlewrite(struct con *cp)
 {
 	ssize_t i;
+	char *buf;
 	
-	i = write(cp->sd, cp->bp, cp->bl);
+	buf = malloc(BUF_ASIZE*sizeof(char));
+	if (buf == NULL)
+		err(1, "malloc fail");
+	printf("Here we check the GET of '%s'\n", cp->buf);
+		
+	
+	
+	
+	i = write(cp->sd, "this is a get\n", 15);
 	if (i == -1) {
 		if (errno != EAGAIN) {
 			/* write failed */
@@ -100,10 +115,8 @@ void handlewrite(struct con *cp)
 	cp->bp += i; /* move where we are */
 	cp->bl -= i; /* decrease how much we have left to write */
 	if (cp->bl == 0) {
-		/* we wrote it all out, so go back to reading */
-		cp->state = STATE_READING;
-		cp->bl = cp->bs; /* we can read up to this much */
-		cp->bp = cp->buf; /* we'll start at the beginning */
+		/* we wrote it all out, so kill client */
+		closecon(cp, 0);
 	}
 }
 
