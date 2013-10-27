@@ -7,8 +7,6 @@
  */
 
 #include <sys/param.h>
-
-#include <sys/param.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
@@ -97,6 +95,8 @@ void handlewrite(struct con *cp)
 	ssize_t i;
 	char *buf, *fLine;
 	char fName[256];
+	
+	printf("Maybe error was here..?\n");
 	
 	buf = malloc(BUF_ASIZE*sizeof(char));
 	fLine = malloc(BUF_ASIZE*sizeof(char));
