@@ -108,7 +108,7 @@ void handlewrite(struct con *cp)
 }
 
 void handleread(struct con *cp) {
-	ssize_t i;
+	ssize_t len;
 	
 	/* ensure enough room to do a decent sized read */
 	if (cp->bl < 10) {
@@ -126,13 +126,14 @@ void handleread(struct con *cp) {
 		cp->bp = cp->buf + (cp->bs - cp->bl);
 	}
 	
-	i = read(cp->sd, cp->bp, cp->bl);
-	if (i == 0) {
+	len = read(cp->sd, cp->bp, cp->bl);
+	if (len == 0) {
+		printf("%s\n", cp->bp);
 		/* 0 byte read means connection closed */
 		closecon(cp, 0);
 		return;
 	}
-	if (i == -1) {
+	if (len == -1) {
 		if (errno != EAGAIN) {
 			/* read failed */
 			err(1, "read failed! sd %d\n", cp->sd);
@@ -141,8 +142,8 @@ void handleread(struct con *cp) {
 		return;
 	}
 	/* have something to read. Change pointer */
-	cp->bp += i;
-	cp->bl -= i;
+	cp->bp += len;
+	cp->bl -= len;
 	
 	/* change state ? */
 	if (*(cp->bp -1) == '\n') {
@@ -235,7 +236,7 @@ int main(int argc, char *argv[])
 		if (max > omax) {
 			/* we need bigger fd_sets allocated */
 			
-			/* free old onex */
+			/* free old ones */
 			free(readable);
 			free(writable);
 			
