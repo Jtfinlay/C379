@@ -47,7 +47,7 @@ int main(int argc, char * argv[])
 	struct sockaddr_in sockname, client;
 	struct sigaction sa;
 	char *ep, *inbuff, *tmp;
-	char outbuff[256], fName[256];
+	char outbuff[256];
 
 	int clientlen, sd;
 
@@ -131,16 +131,17 @@ int main(int argc, char * argv[])
 			internalError((struct sockaddr *)&client, "fork failed", NULL);		
 
 		if (pid == 0) {
-			char * getLine;
+			char * getLine, fName;
 			int valid, written;
 			long lSize;
 			FILE * fp;
 			
 			/* Parse GET */
-			tmp = malloc(128*sizeof(char));
-			if (tmp == NULL)
+			inbuff = malloc(128*sizeof(char));
+			fName = malloc(258*sizeof(char));
+			if (inbuff == NULL || fName == NULL)
 				internalError(&client, "malloc failed", NULL);
-			inbuff = tmp;
+
 			readSocket(clientsd, inbuff, 128);
 
 			tmp = malloc(128*sizeof(char));
@@ -180,7 +181,10 @@ int main(int argc, char * argv[])
 			}
 
 			/* Clean up */
-			//free(getLine);
+			free(getLine);
+			free(inbuff);
+			free(fName);
+			fName = NULL;
 			getLine = NULL;
 			inbuff = NULL;
 

@@ -96,12 +96,12 @@ void handlewrite(struct con *cp)
 	int valid, written;
 	long lSize;
 	ssize_t i;
-	char *buf, *fLine;
-	char fName[256];
+	char *buf, *fLine, *fName;
 	
 	buf = malloc(BUF_ASIZE*sizeof(char));
 	fLine = malloc(BUF_ASIZE*sizeof(char));
-	if (buf == NULL || fLine == NULL) {
+	fName = malloc(256*sizeof(char));
+	if (buf == NULL || fLine == NULL || fName == NULL) {
 		selectError(cp, NULL);
 		err(1, "malloc fail");
 	}

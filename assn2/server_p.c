@@ -56,17 +56,17 @@ void *ThreadWork(void * threadarg)
 	FILE * fp;
 	struct sockaddr * client;
 	struct thread_data * data;
-	char fName[256];
-	char *ep, *inbuff, *tmp;
+	char *ep, *inbuff, *tmp, *fName;
 	data = (struct thread_data *) threadarg;
 	client = data->client;
 	clientsd = data->clientsd;
 	
 	/* Parse GET */
-	tmp = malloc(128*sizeof(char));
-	if (tmp == NULL)
+	inbuff = malloc(128*sizeof(char));
+	fName = malloc(256*sizeof(char));
+	if (inbuff == NULL || fName = NULL)
 		internalError(&client, "malloc failed", NULL);
-	inbuff = tmp;
+	
 	readSocket(clientsd, inbuff, 128);
 
 	tmp = malloc(128*sizeof(char));
@@ -105,10 +105,13 @@ void *ThreadWork(void * threadarg)
 		}
 
 	/* Clean up */
-	//free(getLine);
+	free(getLine);
+	free(inbuff);
 	getLine = NULL;
 	inbuff = NULL;
-
+	free(fName);
+	fName = NULL;
+	
 	close(clientsd);
 	pthread_exit(NULL);
 }
