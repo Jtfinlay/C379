@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s - file could not be created\n", argv[3]);
 		usage();
 	}
-	fclose(argv[3]);
+	fclose(fp);
 	
 	/* now safe to do this */
 	LOG_FILE = argv[3];
