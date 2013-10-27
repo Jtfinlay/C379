@@ -126,7 +126,7 @@ void handlewrite(struct con *cp)
 			/* OK! */
 			printf("Ok.\n");
 			fseek(fp, sizeof(char), SEEK_END);
-			rewine(fp);
+			rewind(fp);
 			/* send OK and file */
 			sendOK(cp->sd, lSize);
 			written = sendFile(fp, cp->sd);
