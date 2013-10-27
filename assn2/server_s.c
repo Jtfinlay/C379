@@ -105,7 +105,7 @@ void handlewrite(struct con *cp)
 		
 	printf("Here we check the GET of '%s'\n", cp->buf);
 	
-	valid = checkGET(cp->buff, fName, fLine);
+	valid = checkGET(cp->buf, fName, fLine);
 	
 	if (valid == 0) { 
 		/* BAD REQUEST */
@@ -137,7 +137,7 @@ void handlewrite(struct con *cp)
 	free(fLine);
 	free(buf);
 	fLine = NULL;
-	buf = NULL:
+	buf = NULL;
 	
 	if (i == -1) {
 		if (errno != EAGAIN) {
