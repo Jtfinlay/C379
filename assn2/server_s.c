@@ -156,7 +156,7 @@ void handlewrite(struct con *cp)
 	cp->bl -= i; /* decrease how much we have left to write */
 //	if (cp->bl == 0) {
 		/* we wrote it all out, so kill client */
-	printf("about to close conn\n")
+	printf("about to close conn\n");
 	closecon(cp, 0);
 	printf("closed\n");
 	//}
