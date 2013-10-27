@@ -120,7 +120,6 @@ void sendOK(int clientsd, int fileLen) {
 	
 	sprintf(length, "%d", fileLen);
 	
-	printf("OK!\n");
 	getTime(time);
 
 	strlcpy(buf, "HTTP/1.1 200 OK\n");
@@ -163,8 +162,6 @@ void sendError(int clientsd, char * title, char * content) {
 void sendBadRequestError(int clientsd) {
 	char title[30], content[128];
 	
-	printf("Bad Request Error\n");
-	
 	strlcpy(title, "400 Bad Request\n");
 	strlcpy(content, "<html><body>\n");
 	strcat(content, "<h2>Malformed Request</h2>\n");
@@ -175,8 +172,6 @@ void sendBadRequestError(int clientsd) {
 }
 void sendNotFoundError(int clientsd) {
 	char title[30], content[128];
-	
-	printf("Not Found Error\n");
 	
 	strlcpy(title, "404 Not Found\n");
 	strlcpy(content, "<html><body>\n");
@@ -189,8 +184,6 @@ void sendNotFoundError(int clientsd) {
 void sendForbiddenError(int clientsd) {
 	char title[30], content[128];
 	
-	printf("Forbidden Error\n");
-	
 	strlcpy(title, "403 Forbidden\n");
 	strlcpy(content, "<html><body>\n");
 	strcat(content, "<h2>Permission denied</h2>\n");
@@ -201,8 +194,6 @@ void sendForbiddenError(int clientsd) {
 }
 void sendGenError(int clientsd) {
 	char title[30], content[128];
-	
-	printf("Generic Error\n");
 	
 	strlcpy(title, "500 Internal Server Error\n");
 	strlcpy(content, "<html><body>\n");
@@ -249,7 +240,6 @@ void writeLog(char * ip, char * get, char * req) {
 	strcat(buf, req);
 	strcat(buf, "\n");
 	
-	printf("Writing: %s\n", buf);
 	f = fopen(LOG_FILE, "a");
 	if (f == NULL)
 		err(0, "log fopen");

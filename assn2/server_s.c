@@ -105,14 +105,11 @@ void handlewrite(struct con *cp)
 		selectError(cp, NULL);
 		err(1, "malloc fail");
 	}
-		
-	printf("Here we check the GET of '%s'\n", cp->buf);
 	
 	valid = checkGET(cp->buf, fName, fLine);
 	
 	if (valid == 0) { 
 		/* BAD REQUEST */
-		printf("Bad Request.\n");
 		sendBadRequestError(cp->sd);
 		logBadRequest(getIPString(&(cp->sa)), fLine);
 	} else {
@@ -122,22 +119,18 @@ void handlewrite(struct con *cp)
 		if (fp == NULL) {
 			if (errno = ENOENT) {
 				/* NOT FOUND */
-				printf("Not Found.\n");
 				sendNotFoundError(cp->sd);
 				logNotFound(getIPString(&(cp->sa)), fLine);
 			} else if (errno == EACCES) {
 				/* FORBIDDEN */
-				printf("Forbidden.\n");
 				sendForbiddenError(cp->sd);
 				logForbidden(getIPString(&(cp->sa)), fLine);
 			} else {
 				/* INTERNAL ERROR */
-				printf("Internal Error.\n");
 				selectError(cp, fLine);
 			}
 		} else {
 			/* OK! */
-			printf("Ok.\n");
 			fseek(fp, sizeof(char), SEEK_END);
 			lSize = ftell(fp);
 			rewind(fp);
@@ -194,7 +187,6 @@ void handleread(struct con *cp) {
 	
 	len = read(cp->sd, cp->bp, cp->bl);
 	if (len == 0) {
-		printf("Connection closed.\n");
 		/* 0 byte read means connection closed */
 		closecon(cp, 0);
 		return;
@@ -207,7 +199,6 @@ void handleread(struct con *cp) {
 		}
 		return;
 	}
-	printf("read: '%s'\n", cp->bp);
 	/* have something to read. Change pointer */
 	cp->bp += len;
 	cp->bl -= len;
@@ -277,8 +268,6 @@ int main(int argc, char *argv[])
 		
 	if (listen(sd, 3) == -1)
 		err(1, "listen failed");
-
-	printf("Server up and listening for connections on port %u\n", port);
 	
 	/* initailize all our connection structures */
 	for (i=0; i < MAXCONN; i++)
