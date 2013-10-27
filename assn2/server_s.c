@@ -103,7 +103,7 @@ void handlewrite(struct con *cp)
 	if (valid == 0) { 
 		/* BAD REQUEST */
 		printf("Bad Request.\n");
-		sendBadRequestError(clientsd);
+		sendBadRequestError(cp->sd);
 		logBadRequest(getIPString(&(cp->sa)), fLine);
 	} else {
 		FILE * fp;
