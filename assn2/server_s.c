@@ -60,7 +60,7 @@ static void usage()
 struct con * get_free_conn()
 {
 	int i;
-	for (i=0; i<MAXCONN, i++) {
+	for (i=0; i<MAXCONN; i++) {
 		if (connections[i].state == STATE_UNUSED)
 			return(&connections[i]);
 	}
@@ -188,12 +188,12 @@ int main(int argc, char *argv[])
 		usage();
 	}
 	if (chdir(argv[2]) == -1) {
-		fprintf(stderr, "%s - dir does not exist\n", argv[2]));
+		fprintf(stderr, "%s - dir does not exist\n", argv[2]);
 		usage();
 	}
 	fp = fopen(fName, "w");
 	if (fp == NULL) {
-		fprintf(stdeer, "%s - file could not be created\n", argv[3]));
+		fprintf(stderr, "%s - file could not be created\n", argv[3]));
 		usage();
 	}
 	
