@@ -81,7 +81,9 @@ void closecon(struct con *cp, int initflag)
 	if (!initflag) {
 		if (cp->sd != -1)
 			close(cp->sd); /* close socket */
+		printf("free up buffer..\n");
 		free(cp->buf); /* free up our buffer */
+		printf("buffer freed\n");
 	}
 	memset(cp, 0, sizeof(struct con)); /* zero out the con struct */
 	cp->buf = NULL; 
@@ -95,8 +97,6 @@ void handlewrite(struct con *cp)
 	ssize_t i;
 	char *buf, *fLine;
 	char fName[256];
-	
-	printf("Maybe error was here..?\n");
 	
 	buf = malloc(BUF_ASIZE*sizeof(char));
 	fLine = malloc(BUF_ASIZE*sizeof(char));
@@ -138,6 +138,7 @@ void handlewrite(struct con *cp)
 	free(buf);
 	fLine = NULL;
 	buf = NULL;
+	
 	
 	if (i == -1) {
 		if (errno != EAGAIN) {
