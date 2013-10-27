@@ -105,9 +105,12 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	}
 	
 	/* Ensure there is a blank line */
+	printf("Ensure blank line.\n");
 	while (line != NULL) {
+		printf("line - %d - '%s'\n", strlen(line), line);
 		if (strlen(line) == 1) {
 			free(backup);
+			printf("blank line!\n");
 			return 1;
 		}
 		line = strtok_r(NULL, "\n", &lptr);
