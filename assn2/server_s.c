@@ -138,8 +138,8 @@ void handlewrite(struct con *cp)
 			sendOK(cp->sd, lSize);
 			written = sendFile(fp, cp->sd);
 			logOK(getIPString(&(cp->sa)), fLine, written, lSize-1);
+			fclose(fp);
 		}
-		fclose(fp);
 	}
 	
 	// Clean
