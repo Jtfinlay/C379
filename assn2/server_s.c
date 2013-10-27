@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
 				for (i =0; i<MAXCONN; i++) {
 					if ((connections[i].state == STATE_READING) &&
 						FD_ISSET(connections[i].sd, readable))
-						handleread(&connections[i]));
+						handleread(&connections[i]);
 					if ((connections[i].state == STATE_WRITING) &&
 						FD_ISSET(connections[i].sd, writable))
 						handlewrite(&connections[i]);
