@@ -133,9 +133,9 @@ void sendBadRequestError(struct con *cp) {
 	strcat(content, "Your browser sent a request I could not understand\n");
 	strcat(content, "</body></html>\n");
 	
-	sendError(cp, title, content);
+	sendError(c, title, content);
 }
-void sendNotFoundError(struct con *cp) {
+void sendNotFoundError(int clientsd) {
 	char title[30], content[128];
 	
 	printf("Not Found Error\n");

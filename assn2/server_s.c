@@ -85,7 +85,8 @@ void closecon(struct con *cp, int initflag)
 /* deal with a connection that we want to write stuff to */
 void handlewrite(struct con *cp)
 {
-	int valid;
+	int valid, written;
+	long lSize;
 	ssize_t i;
 	char *buf, *fLine;
 	char fName[256];
@@ -110,9 +111,13 @@ void handlewrite(struct con *cp)
 			if (errno = ENOENT) {
 				/* NOT FOUND */
 				printf("Not Found.\n");
+				sendNotFoundError(cp->sd);
+				logNotFound(getIPString(cp->sa), getLine);
 			} else if (errno == EACCES) {
 				/* FORBIDDEN */
 				printf("Forbidden.\n");
+				sendForbiddenError(cp->sd);
+				logForbidden(getIPString(cp->sa), getLine);
 			} else {
 				/* INTERNAL ERROR */
 				printf("Internal Error.\n");
@@ -120,10 +125,15 @@ void handlewrite(struct con *cp)
 		} else {
 			/* OK! */
 			printf("Ok.\n");
+			fseek(fp, sizeof(char), SEEK_END);
+			rewine(fp);
+			/* send OK and file */
+			sendOK(cp->sd, lSize);
+			written = sendFile(fp, cp->sd);
+			logOK(getIPString(cp->sa), getLine, written, lSize-1);
 		}
+		fclose(fp);
 	}
-	
-	i = write(cp->sd, "this is a get\n", 15);
 	
 	// Clean
 	free(fLine);
