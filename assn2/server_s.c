@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 		
 		/* we can now call select. Finally.. */
 		i = select(maxfd + 1, readable, writable, NULL, NULL);
-		if (i == -1 && erno != EINTR)
+		if (i == -1 && errno != EINTR)
 			err(1, "select failed");
 		if (i > 0) {
 			
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 					struct sockaddr_in sa;
 					
 					slen = sizeof(sa);
-					newsd = accept(sd, (sturct sockaddr *) &sa,
+					newsd = accept(sd, (struct sockaddr *) &sa,
 						&slen);
 					if (newsd == -1)
 						err(1, "accept failed");
