@@ -106,7 +106,7 @@ void handlewrite(struct con *cp)
 		err(1, "malloc fail");
 	}
 	
-	valid = checkGET(cp->buf, fName, fLine);
+	valid = checkGET(cp->buf, &fName, fLine);
 	
 	if (valid == 0) { 
 		/* BAD REQUEST */
@@ -145,6 +145,8 @@ void handlewrite(struct con *cp)
 	// Clean
 	free(fLine);
 	free(buf);
+	free(fName);
+	fName = NULL;
 	fLine = NULL;
 	buf = NULL;
 	
