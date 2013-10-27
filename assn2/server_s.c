@@ -182,11 +182,6 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s - not a number\n", argv[1]);
 		usage();
 	}
-	if ((errno == ERANGE && p == ULONG_MAX) || (p < USHRT_MAX)) {
-		/* number, but too big */
-		fprintf(stderr, "%s - value out of range\n", argv[1]);
-		usage();
-	}
 	if (chdir(argv[2]) == -1) {
 		fprintf(stderr, "%s - dir does not exist\n", argv[2]);
 		usage();
