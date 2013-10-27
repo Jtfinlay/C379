@@ -65,7 +65,15 @@ struct con * get_free_conn()
 	}
 	return(NULL); /* we're all full - indicate to caller */
 }
-
+void selectError(struct con * cp, char * get) {
+	char * ip;
+	sendGenError(&(cp->sa));
+	
+	if (get != NULL)
+		logInternal(getIPString(client), get);
+	closecon(cp, 0);
+	
+}
 /* 
  * close or initialize a connection - reset a connection to default
  * unused state.
@@ -93,8 +101,10 @@ void handlewrite(struct con *cp)
 	
 	buf = malloc(BUF_ASIZE*sizeof(char));
 	fLine = malloc(BUF_ASIZE*sizeof(char));
-	if (buf == NULL || fLine == NULL)
+	if (buf == NULL || fLine == NULL) {
+		selectError(cp, NULL);
 		err(1, "malloc fail");
+	}
 		
 	printf("Here we check the GET of '%s'\n", cp->buf);
 	
@@ -123,6 +133,7 @@ void handlewrite(struct con *cp)
 			} else {
 				/* INTERNAL ERROR */
 				printf("Internal Error.\n");
+				selectError(cp, fLine);
 			}
 		} else {
 			/* OK! */
