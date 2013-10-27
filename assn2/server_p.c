@@ -124,7 +124,7 @@ int main(int argc, char * argv[])
 	u_long p;
 	int rc, t;
 	
-	//daemon(1,1);
+	daemon(1,1);
 
 	/* check params */
 	if (argc != 4)
