@@ -105,7 +105,7 @@ void handlewrite(struct con *cp)
 		err(1, "malloc fail");
 	}
 	
-	(cp->bp)+1 = '\0';
+	((cp->bp)+1) = '\0';
 	
 	valid = checkGET(cp->buf, fName, fLine);
 	fName++;
