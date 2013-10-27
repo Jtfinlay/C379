@@ -103,6 +103,8 @@ void handlewrite(struct con *cp)
 	if (valid == 0) { 
 		/* BAD REQUEST */
 		printf("Bad Request.\n");
+		sendBadRequestError(clientsd);
+		logBadRequest(getIPString(&(cp->sa)), fLine);
 	} else {
 		FILE * fp;
 		
@@ -126,6 +128,7 @@ void handlewrite(struct con *cp)
 			/* OK! */
 			printf("Ok.\n");
 			fseek(fp, sizeof(char), SEEK_END);
+			lSize = ftell(fp);
 			rewind(fp);
 			/* send OK and file */
 			sendOK(cp->sd, lSize);
