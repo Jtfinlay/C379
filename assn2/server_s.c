@@ -112,12 +112,12 @@ void handlewrite(struct con *cp)
 				/* NOT FOUND */
 				printf("Not Found.\n");
 				sendNotFoundError(cp->sd);
-				logNotFound(getIPString(&(cp->sa)), getLine);
+				logNotFound(getIPString(&(cp->sa)), fLine);
 			} else if (errno == EACCES) {
 				/* FORBIDDEN */
 				printf("Forbidden.\n");
 				sendForbiddenError(cp->sd);
-				logForbidden(getIPString(&(cp->sa)), getLine);
+				logForbidden(getIPString(&(cp->sa)), fLine);
 			} else {
 				/* INTERNAL ERROR */
 				printf("Internal Error.\n");
@@ -130,7 +130,7 @@ void handlewrite(struct con *cp)
 			/* send OK and file */
 			sendOK(cp->sd, lSize);
 			written = sendFile(fp, cp->sd);
-			logOK(getIPString(&(cp->sa)), getLine, written, lSize-1);
+			logOK(getIPString(&(cp->sa)), fLine, written, lSize-1);
 		}
 		fclose(fp);
 	}
