@@ -55,7 +55,12 @@ int main(int argc, char * argv[])
 	u_long p;
 	pid_t pid;
 	
-	daemon(1,1);
+		/* daemonize */
+#ifndef DEBUG
+	/* don't daemonize if we compile with -DDEBUG */
+	if (daemon(1,1) == -1)
+		err(1, "daemon() failed");
+#endif
 
 	/* check params */
 	if (argc != 4)
@@ -71,6 +76,8 @@ int main(int argc, char * argv[])
 	if ((errno == ERANGE && p == ULONG_MAX) || (p > USHRT_MAX)) {
 		/* It's a number, but it either can't fit in an unsigned
 		 * long, or it is too big for an unsigned short */
+		fprintf(stderr, "%s - value out of range\n", argv[1]));
+		usage();
 	}
 	
 	/* Ensure argv[2] is a valid directory */
@@ -169,6 +176,7 @@ int main(int argc, char * argv[])
 					written = sendFile(fp, clientsd);
 					logOK(getIPString(&client), getLine, written, lSize-1);
 				}		
+				fclose(fp);
 			}
 
 			/* Clean up */

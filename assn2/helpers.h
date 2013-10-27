@@ -14,7 +14,7 @@
 	
 char * LOG_FILE;
 	
-char * getIPString(struct sockaddr_in * client) {
+char * getIPString(struct sockaddr * client) {
 	char *buff, *tmp;
 	tmp = malloc(sizeof(char)*20);
 	if (tmp == NULL)
@@ -37,7 +37,7 @@ void getTime(char * buffer) {
 	strftime(buffer, 80,"%a, %d %b %Y %X GMT", gmtime(&t));
 	
 }
-void internalError(struct sockaddr_in * client, char * error, char * get) {
+void internalError(struct sockaddr * client, char * error, char * get) {
 	char * ip;
 	sendGenError(client);
 	

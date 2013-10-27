@@ -124,8 +124,12 @@ int main(int argc, char * argv[])
 	u_long p;
 	int rc, t;
 	
-	daemon(1,1);
-
+	/* daemonize */
+#ifndef DEBUG
+	/* don't daemonize if we compile with -DDEBUG */
+	if (daemon(1,1) == -1)
+		err(1, "daemon() failed");
+#endif
 	/* check params */
 	if (argc != 4)
 		usage();
