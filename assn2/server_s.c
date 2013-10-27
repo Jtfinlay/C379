@@ -6,7 +6,7 @@
  * How to compile & run
  */
 
-#include <sys/param.h
+#include <sys/param.h>
 
 #include <sys/param.h>
 #include <sys/types.h>
