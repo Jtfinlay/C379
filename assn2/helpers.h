@@ -14,7 +14,7 @@
 	
 char * LOG_FILE;
 	
-char * getIPString(struct sockaddr * client) {
+char * getIPString(struct sockaddr_in * client) {
 	char *buff, *tmp;
 	tmp = malloc(sizeof(char)*20);
 	if (tmp == NULL)

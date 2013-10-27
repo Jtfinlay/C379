@@ -76,7 +76,7 @@ int main(int argc, char * argv[])
 	if ((errno == ERANGE && p == ULONG_MAX) || (p > USHRT_MAX)) {
 		/* It's a number, but it either can't fit in an unsigned
 		 * long, or it is too big for an unsigned short */
-		fprintf(stderr, "%s - value out of range\n", argv[1]));
+		fprintf(stderr, "%s - value out of range\n", argv[1]);
 		usage();
 	}
 	
