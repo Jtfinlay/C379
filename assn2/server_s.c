@@ -129,7 +129,9 @@ void handlewrite(struct con *cp)
 		}
 	}
 	
+	printf("before write\n");
 	i = write(cp->sd, "this is a get\n", 15);
+	printf("after write\n");
 	
 	// Clean
 	free(fLine);
@@ -137,6 +139,7 @@ void handlewrite(struct con *cp)
 	fLine = NULL;
 	buf = NULL;
 	
+	printf("after frees\n");
 	
 	if (i == -1) {
 		if (errno != EAGAIN) {
@@ -375,6 +378,11 @@ int main(int argc, char *argv[])
 				 */
 				int j;
 				for (j =0; j<MAXCONN; j++) {
+					printf("1\n");
+					printf("%d\n", connections[j].state);
+					printf("2\n");
+					printf("%d\n", connections[j].sd);
+					printf("3\n");
 					if ((connections[j].state == STATE_READING) &&
 						FD_ISSET(connections[j].sd, readable))
 						handleread(&connections[j]);
