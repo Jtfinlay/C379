@@ -181,6 +181,7 @@ int main(int argc, char * argv[])
 			}
 
 			/* Clean up */
+			fName--;
 			free(getLine);
 			free(inbuff);
 			free(fName);

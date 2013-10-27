@@ -143,6 +143,7 @@ void handlewrite(struct con *cp)
 	}
 	
 	// Clean
+	fName--;
 	free(fLine);
 	free(buf);
 	free(fName);

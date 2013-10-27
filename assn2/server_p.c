@@ -105,11 +105,12 @@ void *ThreadWork(void * threadarg)
 		}
 
 	/* Clean up */
+	fName--;
 	free(getLine);
 	free(inbuff);
+	free(fName);
 	getLine = NULL;
 	inbuff = NULL;
-	free(fName);
 	fName = NULL;
 	
 	close(clientsd);
