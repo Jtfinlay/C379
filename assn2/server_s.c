@@ -24,6 +24,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "shelpers.h"
+
 struct reply {
 	char *buf; /* buffer to store the characters in */
 	char *bp; /* where we are in buffer */
@@ -91,18 +93,52 @@ void closecon(struct con *cp, int initflag)
 /* deal with a connection that we want to write stuff to */
 void handlewrite(struct con *cp)
 {
+	int valid;
 	ssize_t i;
-	char *buf;
+	char *buf, *fLine;
+	char fName[256];
 	
 	buf = malloc(BUF_ASIZE*sizeof(char));
-	if (buf == NULL)
+	fLine = malloc(BUF_ASIZE*sizeof(char));
+	if (buf == NULL || fLine == NULL)
 		err(1, "malloc fail");
-	printf("Here we check the GET of '%s'\n", cp->buf);
 		
+	printf("Here we check the GET of '%s'\n", cp->buf);
 	
+	valid = checkGET(cp->buff, fName, fLine);
 	
+	if (valid == 0) { 
+		/* BAD REQUEST */
+		printf("Bad Request.\n");
+	} else {
+		FILE * fp;
+		
+		fp = fopen(fName, "r");
+		if (fp == NULL) {
+			if (errno = ENOENT) {
+				/* NOT FOUND */
+				printf("Not Found.\n");
+			} else if (errno == EACCES) {
+				/* FORBIDDEN */
+				printf("Forbidden.\n");
+			} else {
+				/* INTERNAL ERROR */
+				printf("Internal Error.\n");
+			}
+		} else {
+			/* OK! */
+			printf("Ok.\n");
+		}
+	}
 	
 	i = write(cp->sd, "this is a get\n", 15);
+	
+	// Clean
+	free(fLine);
+	free(buf);
+	fLine = NULL;
+	buf = NULL:
+	
 	if (i == -1) {
 		if (errno != EAGAIN) {
 			/* write failed */
@@ -111,12 +147,12 @@ void handlewrite(struct con *cp)
 		return;
 	}
 	
-	cp->bp += i; /* move where we are */
-	cp->bl -= i; /* decrease how much we have left to write */
-	if (cp->bl == 0) {
+//	cp->bp += i; /* move where we are */
+//	cp->bl -= i; /* decrease how much we have left to write */
+//	if (cp->bl == 0) {
 		/* we wrote it all out, so kill client */
-		closecon(cp, 0);
-	}
+	closecon(cp, 0);
+	//}
 }
 
 void handleread(struct con *cp) {
