@@ -63,32 +63,36 @@ int writeToClient(int clientsd, char * buff) {
 	return written;
 }
 int checkGET(char * buff, char * fileName, char * firstLine) {
-	char *word, *line, *lptr, *wptr;
+	char *backup, *word, *line, *lptr, *wptr;
 
 	wptr = NULL;
 	lptr = NULL;	
 	
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
+	//strlcpy(backup, buff);
+	backup = strndup(buff, strlen(buff));
+	if (backup == NULL)
+		err(0, "strndup fail");
 	
-	line = strtok_r(buff, "\n", &lptr);
+	line = strtok_r(backup, "\n", &lptr);
 	strlcpy(firstLine, line);
 
 	int i;
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
-		free(buff);
+		free(backup);
 		return 0;
 	}
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL) {
-		free(buff);
+		free(backup);
 		return 0;
 	}
 	strlcpy(fileName, word);
 	if (fileName[0] != '/') {
-		free(buff);
+		free(backup);
 		return 0;
 	}
 	memmove(fileName, fileName+1, strlen(fileName+1));
@@ -96,19 +100,19 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
-		free(buff);
+		free(backup);
 		return 0;	
 	}
 	
 	/* Ensure there is a blank line */
 	while (line != NULL) {
 		if (strlen(line) == 1) {
-			free(buff);
+			free(backup);
 			return 1;
 		}
 		line = strtok_r(NULL, "\n", &lptr);
 	}
-	free(buff);
+	free(backup);
 	return 0;
 }
 void sendOK(int clientsd, int fileLen) {

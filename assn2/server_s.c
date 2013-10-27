@@ -22,26 +22,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "shelpers.h"
-
-struct reply {
-	char *buf; /* buffer to store the characters in */
-	char *bp; /* where we are in buffer */
-	size_t bs; /*total size of buffer */
-};
-/* we use this structure to keep track of each connection to us */
-struct con {
-	int sd; 	/* the socket for this connection */
-	int state; 	/* the state of the connection */
-	struct sockaddr_in sa; /* the sockaddr of the connection */
-	size_t  slen;   /* the sockaddr length of the connection */
-	char *buf;	/* a buffer to store the characters read in */
-	char *bp;	/* where we are in the buffer */
-	size_t bs;	/* total size of the buffer */
-	size_t bl;	/* how much we have left to read/write */
-	struct reply re; /* reply string */
-};
-
+#include "helpers.h"
 #define MAXCONN 256 /* Max # of connections possible */
 struct con connections[MAXCONN];
 
@@ -152,7 +133,6 @@ void handlewrite(struct con *cp)
 		/* we wrote it all out, so kill client */
 
 	closecon(cp, 0);
-	printf("closed\n");
 	//}
 }
 
