@@ -377,14 +377,13 @@ int main(int argc, char *argv[])
 				 */
 				int j;
 				for (j =0; j<MAXCONN; j++) {
-					printf("strt %d\n", j);
+
 					if ((connections[j].state == STATE_READING) &&
 						FD_ISSET(connections[j].sd, readable))
 						handleread(&connections[j]);
 					if ((connections[j].state == STATE_WRITING) &&
 						FD_ISSET(connections[j].sd, writable))
 						handlewrite(&connections[j]);
-					printf("done %d\n", j);
 				}
 			}
 	}
