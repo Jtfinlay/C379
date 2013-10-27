@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <time.h>
 
-char * getIPString(struct sockaddr * client) {
+char * getIPString(struct sockaddr_in * client) {
 	char *buff;
 	buff = malloc(sizeof(char)*20);
 	if (buff == NULL)
