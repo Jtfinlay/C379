@@ -78,7 +78,6 @@ struct con * get_free_conn()
  */
 void closecon(struct con *cp, int initflag)
 {
-	printf("to close conn\n");
 	if (!initflag) {
 		if (cp->sd != -1)
 			close(cp->sd); /* close socket */
@@ -87,7 +86,6 @@ void closecon(struct con *cp, int initflag)
 	memset(cp, 0, sizeof(struct con)); /* zero out the con struct */
 	cp->buf = NULL; 
 	cp->sd = -1;
-	printf("closed conn\n");
 }
 
 /* deal with a connection that we want to write stuff to */
@@ -131,17 +129,13 @@ void handlewrite(struct con *cp)
 		}
 	}
 	
-	printf("before write\n");
 	i = write(cp->sd, "this is a get\n", 15);
-	printf("after write\n");
 	
 	// Clean
 	free(fLine);
 	free(buf);
 	fLine = NULL;
 	buf = NULL;
-	
-	printf("after frees\n");
 	
 	if (i == -1) {
 		if (errno != EAGAIN) {
@@ -151,12 +145,12 @@ void handlewrite(struct con *cp)
 		return;
 	}
 	
-	printf("Line 152ish\n");
+
 	cp->bp += i; /* move where we are */
 	cp->bl -= i; /* decrease how much we have left to write */
 //	if (cp->bl == 0) {
 		/* we wrote it all out, so kill client */
-	printf("about to close conn\n");
+
 	closecon(cp, 0);
 	printf("closed\n");
 	//}
@@ -383,17 +377,13 @@ int main(int argc, char *argv[])
 				 */
 				int j;
 				for (j =0; j<MAXCONN; j++) {
-					printf("loop1\n");
-					printf("%d\n", connections[j].state);
-					printf("loop2\n");
-					printf("%d\n", connections[j].sd);
-					printf("loop3\n");
 					if ((connections[j].state == STATE_READING) &&
 						FD_ISSET(connections[j].sd, readable))
 						handleread(&connections[j]);
 					if ((connections[j].state == STATE_WRITING) &&
 						FD_ISSET(connections[j].sd, writable))
 						handlewrite(&connections[j]);
+					printf("done %d\n", j);
 				}
 			}
 	}
