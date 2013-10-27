@@ -95,7 +95,7 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		free(backup);
 		return 0;
 	}
-	fileName[strlen(fileName)] = '\0';
+	fileName[strlen(fileName)+1] = '\0';
 	
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
