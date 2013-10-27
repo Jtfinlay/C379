@@ -146,8 +146,8 @@ void handlewrite(struct con *cp)
 		return;
 	}
 	
-//	cp->bp += i; /* move where we are */
-//	cp->bl -= i; /* decrease how much we have left to write */
+	cp->bp += i; /* move where we are */
+	cp->bl -= i; /* decrease how much we have left to write */
 //	if (cp->bl == 0) {
 		/* we wrote it all out, so kill client */
 	closecon(cp, 0);
