@@ -81,9 +81,7 @@ void closecon(struct con *cp, int initflag)
 	if (!initflag) {
 		if (cp->sd != -1)
 			close(cp->sd); /* close socket */
-		printf("free up buffer..\n");
 		free(cp->buf); /* free up our buffer */
-		printf("buffer freed\n");
 	}
 	memset(cp, 0, sizeof(struct con)); /* zero out the con struct */
 	cp->buf = NULL; 
@@ -375,14 +373,14 @@ int main(int argc, char *argv[])
 				 * to see if readable or writable. Do read
 				 * or write accordingly
 				 */
-				
-				for (i =0; i<MAXCONN; i++) {
-					if ((connections[i].state == STATE_READING) &&
-						FD_ISSET(connections[i].sd, readable))
-						handleread(&connections[i]);
-					if ((connections[i].state == STATE_WRITING) &&
-						FD_ISSET(connections[i].sd, writable))
-						handlewrite(&connections[i]);
+				int j;
+				for (j =0; j<MAXCONN; j++) {
+					if ((connections[j].state == STATE_READING) &&
+						FD_ISSET(connections[j].sd, readable))
+						handleread(&connections[j]);
+					if ((connections[j].state == STATE_WRITING) &&
+						FD_ISSET(connections[j].sd, writable))
+						handlewrite(&connections[j]);
 				}
 			}
 	}
