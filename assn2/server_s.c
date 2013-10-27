@@ -24,7 +24,11 @@
 #include <string.h>
 #include <unistd.h>
 
-
+struct reply {
+	char *buf; /* buffer to store the characters in */
+	char *bp; /* where we are in buffer */
+	size_t bs; /*total size of buffer */
+};
 /* we use this structure to keep track of each connection to us */
 struct con {
 	int sd; 	/* the socket for this connection */
@@ -36,11 +40,6 @@ struct con {
 	size_t bs;	/* total size of the buffer */
 	size_t bl;	/* how much we have left to read/write */
 	struct reply re; /* reply string */
-};
-struct reply {
-	char *buf; /* buffer to store the characters in */
-	char *bp; /* where we are in buffer */
-	size_t bs; /*total size of buffer */
 };
 
 #define MAXCONN 256 /* Max # of connections possible */
