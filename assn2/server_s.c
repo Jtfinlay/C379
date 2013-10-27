@@ -182,18 +182,18 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s - not a number\n", argv[1]);
 		usage();
 	}
-	if ((erno == ERANGE && p == ULONG_MAX) || (p < USHRT_MAX)) {
+	if ((errno == ERANGE && p == ULONG_MAX) || (p < USHRT_MAX)) {
 		/* number, but too big */
-		fprintf(stderr, "%s - value out of range\n", argv[1]));
+		fprintf(stderr, "%s - value out of range\n", argv[1]);
 		usage();
 	}
 	if (chdir(argv[2]) == -1) {
 		fprintf(stderr, "%s - dir does not exist\n", argv[2]);
 		usage();
 	}
-	fp = fopen(fName, "w");
+	fp = fopen(argv[3], "w");
 	if (fp == NULL) {
-		fprintf(stderr, "%s - file could not be created\n", argv[3]));
+		fprintf(stderr, "%s - file could not be created\n", argv[3]);
 		usage();
 	}
 	
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 	if (sd == -1)
 		err(1, "socket failed");
 		
-	if (bind(sd, (struct sockaddr *) &sockname, sizeof(sockanme)) == -1)
+	if (bind(sd, (struct sockaddr *) &sockname, sizeof(sockname)) == -1)
 		err(1, "bind failed");
 		
 	if (listen(sd, 3) == -1)
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 	printf("Server up and listening for connections on port %u\n", port);
 	
 	/* initailize all our connection structures */
-	for (i=0; i < MAXCONN; i++
+	for (i=0; i < MAXCONN; i++)
 		closecon(&connections[i], 1);
 
 	for(;;) {
