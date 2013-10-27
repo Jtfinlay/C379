@@ -128,7 +128,7 @@ void handleread(struct con *cp) {
 	
 	len = read(cp->sd, cp->bp, cp->bl);
 	if (len == 0) {
-		printf("%s\n", cp->bp);
+		printf("Connection closed.\n");
 		/* 0 byte read means connection closed */
 		closecon(cp, 0);
 		return;
@@ -141,6 +141,7 @@ void handleread(struct con *cp) {
 		}
 		return;
 	}
+	printf("read: '%s'\n", cp->bp);
 	/* have something to read. Change pointer */
 	cp->bp += len;
 	cp->bl -= len;
