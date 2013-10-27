@@ -74,7 +74,8 @@ void *ThreadWork(void * threadarg)
 		internalError(&client, "malloc failed", NULL);
 	getLine = tmp;
 			
-	valid = checkGET(inbuff, &fName, getLine);
+	valid = checkGET(inbuff, fName, getLine);
+	fName++;
 
 	if (valid == 0) {
 		/* BAD REQUEST */

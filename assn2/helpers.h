@@ -62,7 +62,7 @@ int writeToClient(int clientsd, char * buff) {
 	}
 	return written;
 }
-int checkGET(char * buff, char ** fileName, char * firstLine) {
+int checkGET(char * buff, char * fileName, char * firstLine) {
 	char *backup, *word, *line, *lptr, *wptr;
 
 	wptr = NULL;
@@ -90,12 +90,11 @@ int checkGET(char * buff, char ** fileName, char * firstLine) {
 		free(backup);
 		return 0;
 	}
-	strlcpy(*fileName, word);
-	if (*fileName[0] != '/') {
+	strlcpy(fileName, word);
+	if (fileName[0] != '/') {
 		free(backup);
 		return 0;
 	}
-	(*fileName)++;
 //	fileName[strlen(fileName)] = '\0';
 	
 	word = strtok_r(NULL, " ", &wptr);
