@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
 				internalError(&client, "malloc failed", NULL);
 			getLine = tmp;
 			
-			valid = checkGET(inbuff, fName, getLine);
+			valid = checkGET(inbuff, &fName, getLine);
 
 			if (valid == 0) {
 				/* BAD REQUEST */

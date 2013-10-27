@@ -90,8 +90,7 @@ int checkGET(char * buff, char ** fileName, char * firstLine) {
 		free(backup);
 		return 0;
 	}
-	/* FML */
-	strlcpy(**fileName, word);
+	strlcpy(*fileName, word);
 	if (*fileName[0] != '/') {
 		free(backup);
 		return 0;
