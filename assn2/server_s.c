@@ -96,15 +96,16 @@ void handlewrite(struct con *cp)
 	int valid, written;
 	long lSize;
 	ssize_t i;
-	char *buf, *fLine, *fName;
+	char *fLine, *fName;
 	
-	buf = malloc(BUF_ASIZE*sizeof(char));
 	fLine = malloc(BUF_ASIZE*sizeof(char));
 	fName = malloc(256*sizeof(char));
-	if (buf == NULL || fLine == NULL || fName == NULL) {
+	if (fLine == NULL || fName == NULL) {
 		selectError(cp, NULL);
 		err(1, "malloc fail");
 	}
+	
+	(cp->bp)+1 = '\0';
 	
 	valid = checkGET(cp->buf, fName, fLine);
 	fName++;
@@ -146,11 +147,9 @@ void handlewrite(struct con *cp)
 	// Clean
 	fName--;
 	free(fLine);
-	free(buf);
 	free(fName);
 	fName = NULL;
 	fLine = NULL;
-	buf = NULL;
 	
 	if (i == -1) {
 		if (errno != EAGAIN) {

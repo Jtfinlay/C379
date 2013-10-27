@@ -42,6 +42,7 @@ static void kidhandler(int signum) {
 	waitpid(WAIT_ANY, NULL, WNOHANG);
 }
 static void readSocket(int sockfd, char * buff, size_t bufflen) {
+	
 	/* reads GET from socket */
 	if (recv(sockfd, buff, bufflen, 0) == -1)
 		err(1, "receive failed");	
