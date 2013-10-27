@@ -116,7 +116,7 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		}
 		line = strtok_r(NULL, "\n", &lptr);
 	}
-	printf("No blank.");
+	printf("No blank.\n");
 	free(backup);
 	return 0;
 }
