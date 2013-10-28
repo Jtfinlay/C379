@@ -128,7 +128,7 @@ int main(int argc, char * argv[])
 			internalError((struct sockaddr *)&client, "fork failed", NULL);		
 
 		if (pid == 0) {
-			char * getLine, fName;
+			char * getLine, *fName;
 			int valid, written;
 			long lSize;
 			FILE * fp;
