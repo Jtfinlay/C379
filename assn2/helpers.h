@@ -91,12 +91,13 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	}
 	printf("5\n");
 	strlcpy(fileName, word, 256);
+	printf("6\n");
 	if (fileName[0] != '/') {
 		free(backup);
 		return 0;
 	}
 //	fileName[strlen(fileName)] = '\0';
-	printf("6\n");
+	printf("6.5\n");
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
 		free(backup);
