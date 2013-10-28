@@ -145,11 +145,9 @@ int main(int argc, char * argv[])
 			if (getLine == NULL)
 				internalError(&client, "malloc failed", NULL);
 			
-			printf("before checkGET\n");
 			valid = checkGET(inbuff, fName, getLine);
-			printf("after checkGET\n");
 			fName++;
-			printf("another \n");
+
 
 			if (valid == 0) {
 				printf("invalid\n");
@@ -158,10 +156,9 @@ int main(int argc, char * argv[])
 				logBadRequest(getIPString(&client), getLine);
 			} else {
 				/* GET is good. Try reading file & sending */
-				printf("opening\n");
+
 				fp = fopen(fName, "r");
 				if (fp == NULL) {
-					printf("fp is null\n");
 					if (errno == ENOENT) {
 						sendNotFoundError(clientsd);
 						logNotFound(getIPString(&client), getLine);
@@ -171,13 +168,13 @@ int main(int argc, char * argv[])
 					} else 
 						internalError(&client, "fopen failed", getLine);
 				} else {
-					printf("full is valid\n");
+					
 					/* get file size */
 					fseek(fp, sizeof(char), SEEK_END);
 					lSize = ftell(fp);
 					rewind(fp);
 					/* send OK and file */
-					printf("sendOK\n");
+				
 					sendOK(clientsd, lSize);
 					written = sendFile(fp, clientsd);
 					logOK(getIPString(&client), getLine, written, lSize-1);
