@@ -150,7 +150,6 @@ int main(int argc, char * argv[])
 
 
 			if (valid == 0) {
-				printf("invalid\n");
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
 				logBadRequest(getIPString(&client), getLine);
