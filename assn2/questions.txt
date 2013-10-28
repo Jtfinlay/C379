@@ -1,0 +1,42 @@
+Question 0
+I found that the easiest server to implement was the forking server. Unlike the
+other servers, the fork server did not have to concern itself over shared memory
+or use complicated libraries. Each process could be trusted to run its own code
+without any issue. Difficulties did arise in that it was the first server I had
+implemented.
+The most difficult server was the threading server. Due to the nature of threads
+sharing common resources, it was important to use thread-safe functions and to
+ensure that the resources were initialized independently of each other. This was
+a difficult and arduous process.
+Some difficulties arose in the peculiarities of the select server and how it
+worked. Being unfamiliar with the server libraries made it difficult to figure
+out how I expected the system to work. However, the class resources involved
+were very useful.  
+
+Question 1
+The forking server would be advantageous over a threading server when the
+program is expected to be easily-maintainable or on a single cpu system. The
+reasons for this are that it can be very difficult to debug a threading server,
+while debugging child processes are much easier. As well, forking can be much
+faster than threading in single cpu systems because there are no locking
+over-heads or context switching.
+A threading server can be more advantageous in a number of cases: low memory,
+inter-process communication, as well as a shorter start up and stop time. The 
+lower memory is due to the fact that threads share memory with each other and
+their parent process, unlike fork (which has its own copy). Threads can also
+communicate between once another (useful for client-server-client communication)
+. As well, the shared memory allows threads to be started and stopped faster.
+
+Question 2
+A select server would be ideal on a system where there is either limited thread
+use or a thread limit. It is also better for performance, and can deal with
+connections asynchronously. The reason for these advantages is the reduction
+of context switches in the system, which are prevalent in multithreading and
+costly operations. If there are too many threads compared to process count. a
+lot of time will be spent switching between threads. A single-threaded server
+would completely avoid this. 
+A thread-based solution is optimal when considering performance vs coding time.
+If the server is meant to be small, it is much easier to program a blocking
+multiple-threaded system rather than a single-threaded server. Especially on a 
+small scale, the difference between multithreading speed and singlethread speed
+is minimal. On larger systems, multithreading becomes slower.

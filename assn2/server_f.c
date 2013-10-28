@@ -1,10 +1,66 @@
 /*
- * Licensing goes here.
- *
- */
+ 
+Author: James Finlay
+Date: Oct. 27th 2013
+ 
+Description:
+Performs logging based upon the servers mode of operation
+ 
+License is a MS-PL license
+ 
+This license governs use of the accompanying software. If you use the software,
+you accept this license. If you do not accept the license, do not use the 
+software.
+ 
+1. Definitions
+The terms "reproduce," "reproduction," "derivative works," and "distribution" 
+have the same meaning here as under U.S. copyright law.
+A "contribution" is the original software, or any additions or changes to the 
+software.
+A "contributor" is any person that distributes its contribution under this 
+license.
+"Licensed patents" are a contributor's patent claims that read directly on its 
+contribution.
+ 
+2. Grant of Rights
+(A) Copyright Grant- Subject to the terms of this license, including the license
+conditions and limitations in section 3, each contributor grants you a non-
+exclusive, worldwide, royalty-free copyright license to reproduce its 
+contribution, prepare derivative works of its contribution, and distribute its 
+contribution or any derivative works that you create.
+(B) Patent Grant- Subject to the terms of this license, including the license 
+conditions and limitations in section 3, each contributor grants you a non-
+exclusive, worldwide, royalty-free license under its licensed patents to make, 
+have made, use, sell, offer for sale, import, and/or otherwise dispose of its 
+contribution in the software or derivative works of the contribution in the 
+software.
+ 
+3. Conditions and Limitations
+(A) No Trademark License- This license does not grant you rights to use any 
+contributors' name, logo, or trademarks.
+(B) If you bring a patent claim against any contributor over patents that you 
+claim are infringed by the software, your patent license from such contributor 
+to the software ends automatically.
+(C) If you distribute any portion of the software, you must retain all 
+copyright, patent, trademark, and attribution notices that are present in the 
+software.
+(D) If you distribute any portion of the software in source code form, you may 
+do so only under this license by including a complete copy of this license with 
+your distribution. If you distribute any portion of the software in compiled or 
+object code form, you may only do so under a license that complies with this 
+license.
+(E) The software is licensed "as-is." You bear the risk of using it. The 
+contributors give no express warranties, guarantees or conditions. You may have 
+additional consumer rights under your local laws which this license cannot 
+change. To the extent permitted under your local laws, the contributors exclude 
+the implied warranties of merchantability, fitness for a particular purpose and 
+non-infringement.
+ 
+*/
 
 /*
- * Compile using something
+ * Can be compiled using 'make server_f' or 'make all'.
+ * Created for ohaton.cs.ualberta.ca
  */
 
 #include <sys/types.h>
@@ -36,8 +92,6 @@ static void readSocket(int sockfd, char * buff, size_t bufflen) {
 	/* reads GET from socket */
 	if (recv(sockfd, buff, bufflen, 0) == -1)
 		err(1, "receive failed");	
-
-	// NOTE -> Might not buffer everything. Probably should fix that.
 }
 int main(int argc, char * argv[])
 {
@@ -125,7 +179,8 @@ int main(int argc, char * argv[])
 		/* fork child to deal with each connection */
 		pid = fork();
 		if (pid == -1)
-			internalError((struct sockaddr *)&client, "fork failed", NULL);		
+			internalError((struct sockaddr *)&client, 
+				"fork failed", NULL);		
 
 		if (pid == 0) {
 			char * getLine, *fName;
@@ -134,12 +189,12 @@ int main(int argc, char * argv[])
 			FILE * fp;
 			
 			/* Parse GET */
-			inbuff = malloc(128*sizeof(char));
+			inbuff = malloc(12800*sizeof(char));
 			fName = malloc(256*sizeof(char));
 			if (inbuff == NULL || fName == NULL)
 				internalError(&client, "malloc failed", NULL);
 
-			readSocket(clientsd, inbuff, 128);
+			readSocket(clientsd, inbuff, 12800);
 
 			getLine = malloc(256*sizeof(char));
 			if (getLine == NULL)
@@ -160,12 +215,18 @@ int main(int argc, char * argv[])
 				if (fp == NULL) {
 					if (errno == ENOENT) {
 						sendNotFoundError(clientsd);
-						logNotFound(getIPString(&client), getLine);
+						logNotFound(
+							getIPString(&client),
+							 getLine);
 					} else if (errno == EACCES) {
 						sendForbiddenError(clientsd);
-						logForbidden(getIPString(&client), getLine);
+						logForbidden(
+							getIPString(&client), 
+							getLine);
 					} else 
-						internalError(&client, "fopen failed", getLine);
+						internalError(&client, 
+							"fopen failed", 
+							getLine);
 				} else {
 					
 					/* get file size */
@@ -176,7 +237,8 @@ int main(int argc, char * argv[])
 				
 					sendOK(clientsd, lSize);
 					written = sendFile(fp, clientsd);
-					logOK(getIPString(&client), getLine, written, lSize-1);
+					logOK(getIPString(&client), getLine, 
+						written, lSize-1);
 				}		
 				fclose(fp);
 			}
