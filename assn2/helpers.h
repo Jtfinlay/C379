@@ -89,7 +89,7 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		free(backup);
 		return 0;
 	}
-	printf("5\n");
+	printf("word: '%s'\n", word);
 	strlcpy(fileName, word, strlen(word));
 	printf("6\n");
 	if (fileName[0] != '/') {
