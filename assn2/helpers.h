@@ -75,9 +75,7 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		err(0, "strndup fail");
 	
 	line = strtok_r(backup, "\n", &lptr);
-	strlcpy(firstLine, line);
-
-	int i;
+	strlcpy(firstLine, line, 256);
 	
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
@@ -90,7 +88,7 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		free(backup);
 		return 0;
 	}
-	strlcpy(fileName, word);
+	strlcpy(fileName, word, 256);
 	if (fileName[0] != '/') {
 		free(backup);
 		return 0;

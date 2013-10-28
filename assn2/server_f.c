@@ -135,16 +135,15 @@ int main(int argc, char * argv[])
 			
 			/* Parse GET */
 			inbuff = malloc(128*sizeof(char));
-			fName = malloc(258*sizeof(char));
+			fName = malloc(256*sizeof(char));
 			if (inbuff == NULL || fName == NULL)
 				internalError(&client, "malloc failed", NULL);
 
 			readSocket(clientsd, inbuff, 128);
 
-			tmp = malloc(128*sizeof(char));
-			if (tmp == NULL)
+			getLine = malloc(256*sizeof(char));
+			if (getLine == NULL)
 				internalError(&client, "malloc failed", NULL);
-			getLine = tmp;
 			
 			printf("before checkGET\n");
 			valid = checkGET(inbuff, fName, getLine);
