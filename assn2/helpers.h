@@ -68,26 +68,28 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 	wptr = NULL;
 	lptr = NULL;	
 	
+	printf("1\n");
 	/* First line should be 'GET /someplace/file.html HTTP/1.1' */
 	//strlcpy(backup, buff);
 	backup = strndup(buff, strlen(buff));
 	if (backup == NULL)
 		err(0, "strndup fail");
-	
+	printf("2\n");
 	line = strtok_r(backup, "\n", &lptr);
 	strlcpy(firstLine, line, 256);
-	
+	printf("3\n");
 	word = strtok_r(line, " ", &wptr);
 	if (word == NULL || strncmp(word, "GET", 3) != 0) {
 		free(backup);
 		return 0;
 	}
-	
+	printf("4\n");
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL) {
 		free(backup);
 		return 0;
 	}
+	printf("5\n");
 	strlcpy(fileName, word, 256);
 	if (fileName[0] != '/') {
 		free(backup);
