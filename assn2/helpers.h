@@ -96,13 +96,13 @@ int checkGET(char * buff, char * fileName, char * firstLine) {
 		return 0;
 	}
 //	fileName[strlen(fileName)] = '\0';
-	
+	printf("6\n");
 	word = strtok_r(NULL, " ", &wptr);
 	if (word == NULL || strncmp(word, "HTTP/1.1",  8) != 0) {
 		free(backup);
 		return 0;	
 	}
-	
+	printf("7\n");
 	/* Ensure there is a blank line */
 	printf("Ensure blank line.\n");
 	line = strtok_r(NULL, "\n", &lptr);
