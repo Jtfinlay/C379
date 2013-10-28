@@ -174,6 +174,7 @@ int main(int argc, char * argv[])
 					lSize = ftell(fp);
 					rewind(fp);
 					/* send OK and file */
+					printf("sendOK\n");
 					sendOK(clientsd, lSize);
 					written = sendFile(fp, clientsd);
 					logOK(getIPString(&client), getLine, written, lSize-1);
