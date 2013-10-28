@@ -172,7 +172,7 @@ int main(int argc, char * argv[])
 					} else 
 						internalError(&client, "fopen failed", getLine);
 				} else {
-					printf("full is valid\n")
+					printf("full is valid\n");
 					/* get file size */
 					fseek(fp, sizeof(char), SEEK_END);
 					lSize = ftell(fp);
