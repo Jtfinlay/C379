@@ -158,6 +158,7 @@ int main(int argc, char * argv[])
 				logBadRequest(getIPString(&client), getLine);
 			} else {
 				/* GET is good. Try reading file & sending */
+				printf("opening\n");
 				fp = fopen(fName, "r");
 				if (fp == NULL) {
 					if (errno == ENOENT) {
@@ -169,6 +170,7 @@ int main(int argc, char * argv[])
 					} else 
 						internalError(&client, "fopen failed", getLine);
 				} else {
+					printf("here\n")
 					/* get file size */
 					fseek(fp, sizeof(char), SEEK_END);
 					lSize = ftell(fp);
