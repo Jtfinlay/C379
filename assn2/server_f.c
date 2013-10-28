@@ -20,10 +20,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifndef HELPERS_H
-#define HELPERS_H
-	#include "helpers.h"
-#endif
+#include "helpers.h"
 
 static void usage()
 {
@@ -149,8 +146,11 @@ int main(int argc, char * argv[])
 				internalError(&client, "malloc failed", NULL);
 			getLine = tmp;
 			
+			printf("before checkGET\n");
 			valid = checkGET(inbuff, fName, getLine);
+			printf("after checkGET\n");
 			fName++;
+			printf("another \n");
 
 			if (valid == 0) {
 				printf("invalid\n");
