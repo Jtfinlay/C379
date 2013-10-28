@@ -9,3 +9,7 @@ server_s: server_s.c helpers.h strlcpy.o
 all: server_f server_p server_s
 clean:
 	-rm -f *.o
+	-rm -f server_f
+	-rm -f server_p
+	-rm -f server_s
+	-rm -f *~

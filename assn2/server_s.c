@@ -105,6 +105,12 @@ struct con connections[MAXCONN];
 
 char * LOG_FILE;
 
+static void usage();
+void selectError(struct con * cp, char * get);
+void closecon(struct con *cp, int initflag);
+void handlewrite(struct con *cp);
+void handleread(struct con *cp);
+
 static void usage()
 {
 	extern char * __progname;

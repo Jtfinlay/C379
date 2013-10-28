@@ -78,6 +78,10 @@ non-infringement.
 
 #include "helpers.h"
 
+static void usage();
+static void kidhandler(int signum);
+static void readSocket(int sockfd, char * buff, size_t bufflen);
+
 static void usage()
 {
 	extern char * __progname;

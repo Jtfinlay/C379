@@ -79,6 +79,28 @@ non-infringement.
 #include <time.h>
 	
 char * LOG_FILE;
+char * getIPString(struct sockaddr_in * client);
+void getTime(char * buffer);
+void internalError(struct sockaddr * client, char * error, char * get);
+int writeToClient(int clientsd, char * buff);
+int checkGET(char * buff, char * fileName, char * firstLine);
+void sendOK(int clientsd, int fileLen);
+void sendError(int clientsd, char * title, char * content);
+void sendBadRequestError(int clientsd);
+void sendNotFoundError(int clientsd);
+void sendForbiddenError(int clientsd);
+void sendGenError(int clientsd);
+int sendFile(FILE * fp, int clientsd);
+void writeLog(char * ip, char * get, char * req);
+void logOK(char * ip, char * get, int iWrote, int iTotal);
+void logBadRequest(char * ip, char * get);
+void logNotFound(char * ip, char * get);
+void logForbidden(char * ip, char * get);
+void logInternal(char * ip, char * get);
+
+
+
+
 	
 char * getIPString(struct sockaddr_in * client) {
 	char *buff, *tmp;

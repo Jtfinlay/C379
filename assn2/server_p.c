@@ -87,6 +87,12 @@ struct thread_data
 	int clientsd;
 	struct sockaddr * client;
 };
+
+static void usage();
+static void kidhandler(int signum);
+static void readSocket(int sockfd, char * buff, size_t bufflen);
+void *ThreadWork(void * threadarg);
+
 static void usage()
 {
 	extern char * __progname;
