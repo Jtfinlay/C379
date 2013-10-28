@@ -153,6 +153,7 @@ int main(int argc, char * argv[])
 			fName++;
 
 			if (valid == 0) {
+				printf("invalid\n");
 				/* BAD REQUEST */
 				sendBadRequestError(clientsd);
 				logBadRequest(getIPString(&client), getLine);
@@ -161,6 +162,7 @@ int main(int argc, char * argv[])
 				printf("opening\n");
 				fp = fopen(fName, "r");
 				if (fp == NULL) {
+					printf("fp is null\n");
 					if (errno == ENOENT) {
 						sendNotFoundError(clientsd);
 						logNotFound(getIPString(&client), getLine);
@@ -170,7 +172,7 @@ int main(int argc, char * argv[])
 					} else 
 						internalError(&client, "fopen failed", getLine);
 				} else {
-					printf("here\n")
+					printf("full is valid\n")
 					/* get file size */
 					fseek(fp, sizeof(char), SEEK_END);
 					lSize = ftell(fp);
