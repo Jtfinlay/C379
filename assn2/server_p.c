@@ -65,7 +65,7 @@ void *ThreadWork(void * threadarg)
 	/* Parse GET */
 	inbuff = malloc(128*sizeof(char));
 	fName = malloc(256*sizeof(char));
-	if (inbuff == NULL || fName = NULL)
+	if (inbuff == NULL || fName == NULL)
 		internalError(&client, "malloc failed", NULL);
 	
 	readSocket(clientsd, inbuff, 128);
