@@ -15,29 +15,36 @@
 #include <unistd.h>
 #include <string.h>
 
-#define MAX_ROCKETS	10   	/* Maximum rockets available */
+#define MAX_ROCKETS	25   	/* Maximum rockets available */
+#define MAX_SAUCERS	10	/* Maximum saucers available */
 #define TIME_DELAY    	20000	/* timeunits in microseconds */
+#define LAUNCH_DELAY	100000	/* time between potential saucer launches */
 #define ROCKET_V	5	/* speed of rocket */
+#define MAX_SAUCE_V	7	/* max speed of saucers */
 #define SAUCER_ROWS   	5	/* number of rows for saucers */
 
-typedef struct Rocket {
+typedef struct entity {
 	int x;
 	int y;
 	int alive;
-} Rocket;
+} Rocket, Saucer;
+
 
 pthread_mutex_t mxCurses =  PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mxRockets = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mxSaucers = PTHREAD_MUTEX_INITIALIZER;
 
-void setup(Rocket rockets[]);
+Rocket rockets[MAX_ROCKETS];	/* rocket data array */
+pthread_t tRockets[MAX_ROCKETS];/* rocket thread array */
+
+void setup();
 void launchRocket(Rocket r[], pthread_t th[], int x);
 void *animateRocket(void* r);
+void *saucerManager();
 void drawUser(int x);
 
 int main(int argc, char *argv[])
 {
-	Rocket rockets[MAX_ROCKETS];	/* rocket data array */
-	pthread_t tRockets[MAX_ROCKETS];/* rocket thread array */
 	int c;				/* user input */
 	int x;				/* user position */
 	int i;	
@@ -45,7 +52,7 @@ int main(int argc, char *argv[])
 	/* check input params */
 
 	/* setup */
-	setup(rockets);
+	setup();
 	x = COLS/2;
 
 	/* create threads */
@@ -66,7 +73,6 @@ int main(int argc, char *argv[])
 		/* FIRE ROCKET */
 		if (c == ' ') launchRocket(rockets, tRockets, x);
 		
-
 		/* DRAW PLAYER */
 		drawUser(x);
 	}
@@ -77,7 +83,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 /* set up game */
-void setup(Rocket rockets[])
+void setup()
 {
 	int i=0;
 
@@ -152,6 +158,22 @@ void *animateRocket(void *rocket) {
 		    refresh();
 		pthread_mutex_unlock(&mxCurses);
 		
+	}
+
+}
+void *saucerManager() {
+	Saucer saucers[MAX_SAUCERS];	/* saucer data array */
+	pthread_t tSaucers[MAX_SAUCERS];/* saucer thread array */
+
+	while (1) {
+		
+		/* Randomly launch saucers */
+
+		
+
+		/* Check rocket/saucer collisions */
+
+
 	}
 
 }
