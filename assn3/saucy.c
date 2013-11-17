@@ -19,21 +19,31 @@
 #define TIME_DELAY    20000	/* timeunits in microseconds */
 #define SAUCER_ROWS   5		/* number of rows for saucers */
 
-pthread_mutex_t mxCurses = PTHREAD_MUTEX_INITIALIZER;
+typedef struct Rocket {
+	int x;
+	int y;
+	int alive;
+} Rocket;
 
-void *animateRocket();
+pthread_mutex_t mxCurses =  PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mxRockets = PTHREAD_MUTEX_INITIALIZER;
+
+void setup(Rocket rockets[]);
+void *animateRocket(void* r);
 void drawUser(int x);
 
 int main(int argc, char *argv[])
 {
-	pthread_t rockets[MAX_ROCKETS];	/* rocket array! */
+	Rocket rockets[MAX_ROCKETS];	/* rocket data array */
+	pthread_t tRockets[MAX_ROCKETS];/* rocket thread array */
 	int c;				/* user input */
-	int x;				/* user position */	
+	int x;				/* user position */
+	int i;	
 
 	/* check input params */
 
 	/* setup */
-	setup();
+	setup(rockets);
 	x = COLS/2;
 
 	/* create threads */
@@ -53,7 +63,18 @@ int main(int argc, char *argv[])
 
 		/* FIRE ROCKET */
 		if (c == ' ') {
-
+			pthread_mutex_lock(&mxRockets);
+			for (i=0; i<MAX_ROCKETS; i++) {
+				if (!rockets[i].alive) {
+	if (pthread_create(&tRockets[i], NULL, animateRocket, &rockets[i])) {
+		fprintf(stderr, "error creating thread");
+		endwin();
+		exit(0);
+	}
+				break;
+				}
+			}
+			pthread_mutex_unlock(&mxRockets);
 		}
 
 		/* DRAW PLAYER */
@@ -66,8 +87,16 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int setup()
+void setup(Rocket rockets[])
 {
+	int i=0;
+
+	/* set up rockets */
+	for (i=0; i<MAX_ROCKETS; i++) {
+		rockets[i].x = 5;
+		rockets[i].y = LINES-3;
+		rockets[i].alive = 0;
+	}
 
 	/* set up curses */
 	initscr();
@@ -81,8 +110,8 @@ int setup()
 }
 
 /* manages rocket propulsion */
-void *animateRocket() {
-
+void *animateRocket(void *r) {
+	Rocket *rocket = r;
 }
 /* draw player */
 void drawUser(int x) {
