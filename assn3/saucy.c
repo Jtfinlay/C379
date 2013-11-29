@@ -15,14 +15,17 @@
 #include <unistd.h>
 #include <string.h>
 
-#define MAX_ROCKETS	25   	/* Maximum rockets available */
+#define ROCKETS_ON_HIT	5	/* How many rockets gained on hitting alien */
+#define MAX_ESCAPE	20	/* Maximum escaped until game over */
+#define START_ROCKETS	100	/* Maximum available at start */
+#define MAX_ROCKETS_T	25   	/* Maximum rockets available */
 #define MAX_SAUCERS	10	/* Maximum saucers available */
 #define TIME_DELAY    	20000	/* timeunits in microseconds */
 #define LAUNCH_DELAY	200000	/* time between potential saucer launches */
 #define ROCKET_V	5	/* speed of rocket */
 #define MAX_SAUCE_V	7	/* max speed of saucers */
 #define SAUCER_ROWS   	5	/* number of rows for saucers */
-#define INSTRUCT	" 'Q' to quit ',' moves left '.' moves right SPACE first :"
+#define INSTRUCT	"'Q' to quit ',' moves left '.' moves right SPACE first"
 
 typedef struct entity {
 	int x;
@@ -36,24 +39,28 @@ pthread_mutex_t mxCurses =  PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mxRockets = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mxSaucers = PTHREAD_MUTEX_INITIALIZER;
 
-Rocket rockets[MAX_ROCKETS];	/* rocket data array */
-pthread_t tRockets[MAX_ROCKETS];/* rocket thread array */
+Rocket rockets[MAX_ROCKETS_T];	/* rocket data array */
+pthread_t tRockets[MAX_ROCKETS_T];/* rocket thread array */
 Saucer saucers[MAX_SAUCERS];	/* saucer data array */
 pthread_t tSaucers[MAX_SAUCERS];/* saucer thread array */
 
 int ESCAPED = 0;
 int HITS = 0;
-int MAX_ESCAPE;
+int ROCKETS = 0;
 
+int game_over=0;
+
+static void usage();
 void setup();
 void drawUser(int x);
 void drawScore();
 void *scoreManager();
+void *inputManager();
+void *saucerManager();
 
 void launchRocket(Rocket r[], pthread_t th[], int x);
 void *animateRocket(void* r);
 
-void *saucerManager();
 void launchSaucer(Saucer s[], pthread_t th[], int y);
 void *animateSaucer(void *saucer);
 
@@ -61,6 +68,7 @@ int checkForRocket(int x, int y);
 int checkForSaucer(int x, int y);
 void killSaucerAt(int x, int y);
 void killRocketAt(int x, int y);
+int countRocketsLiving();
 
 static void usage()
 {
@@ -72,8 +80,7 @@ int main(int argc, char *argv[])
 {
 	pthread_t sauceBoss;	/* saucer manager */
 	pthread_t scoreBoss;	/* score manager */
-	int c;			/* user input */
-	int x;			/* user position */
+	pthread_t inputBoss;	/* input manager */
 	int i;	
 
 	/* check input params */
@@ -82,44 +89,24 @@ int main(int argc, char *argv[])
 
 	/* setup */
 	setup();
-	x = COLS/2;
 
 	/* create threads */
-	if (pthread_create(&sauceBoss, NULL, saucerManager, NULL)) {
+	if (pthread_create(&sauceBoss, NULL, saucerManager, NULL) ||
+	    pthread_create(&scoreBoss, NULL, scoreManager, NULL) ||
+	    pthread_create(&inputBoss, NULL, inputManager, NULL)) {
+
 		fprintf(stderr, "error creating thread");
 		endwin();
 		exit(0);
 	}
-	if (pthread_create(&scoreBoss, NULL, scoreManager, NULL)) {
-		fprintf(stderr, "error creating thread");
-		endwin();
-		exit(0);
-	}
 
-	/* loop to process input */
-	while (1) {
-		c = getch();
-
-		/* QUIT */
-		if (c == 'Q') break;
-	
-		/* MOVE PLAYER */
-		if (c == ',') 	x--;
-		if (c == '.') 	x++;
-		if (x<0) 	x=0;
-		if (x>COLS-1)	x=COLS-1;
-
-		/* FIRE ROCKET */
-		if (c == ' ') launchRocket(rockets, tRockets, x);
-		
-		/* DRAW PLAYER */
-		drawUser(x);
-	}
+	while( !game_over );
 	
 
 	/* clean up */
 	pthread_cancel(sauceBoss);
 	pthread_cancel(scoreBoss);
+	pthread_cancel(inputBoss);
 	endwin();
 	return 0;
 }
@@ -136,29 +123,75 @@ void setup()
 	clear();
 	
 	/* draw start info */
+	ROCKETS = START_ROCKETS;
 	drawScore();
 	drawUser(COLS/2);
 }
 void drawScore() {
 	pthread_mutex_lock(&mxCurses);
-		mvprintw(LINES-1, 0, "%s Escaped %d, Hits %d", 
-			INSTRUCT, ESCAPED, HITS);
+		move(LINES-2, 0);
+		clrtoeol();
+		mvprintw(LINES-1, 0, "%s", INSTRUCT);
+		mvprintw(LINES-2, 0, " Escaped %d, Hits %d, Rockets %d", 
+			ESCAPED, HITS, ROCKETS);
 	pthread_mutex_unlock(&mxCurses);
 }
 void *scoreManager() {
 	while (1) {
+
 		usleep(TIME_DELAY);
+
 		drawScore();
+
+		/* All rockets gone? */
+		if (ROCKETS <= 0 && countRocketsLiving() == 0) {
+			printf("The fuck.\n");
+			printf("Game over! You killed %d aliens before running %s\n",
+				HITS, "out of ammo.");
+			game_over++;
+		}
+
+		/* All aliens escaped? */
+		if (ESCAPED >= MAX_ESCAPE) {
+			printf("Game over! You killed %d aliens they overwhelmed %s\n",
+				HITS, "you.\n");
+			game_over++;
+		}
+	}
+}
+void *inputManager() {
+	int c;			/* user input */
+	int x;			/* user position */
+
+	x = COLS/2;
+
+	while (1) {
+		c = getch();
+
+		/* QUIT */
+		if (c == 'Q') game_over++;
+	
+		/* MOVE PLAYER */
+		if (c == ',') 	x--;
+		if (c == '.') 	x++;
+		if (x<0) 	x=0;
+		if (x>COLS-1)	x=COLS-1;
+
+		/* FIRE ROCKET */
+		if (c == ' ') launchRocket(rockets, tRockets, x);
+		
+		/* DRAW PLAYER */
+		drawUser(x);
 	}
 }
 /* draw player */
 void drawUser(int x) {
 	pthread_mutex_lock(&mxCurses);
-	    move(LINES-2, x-1);
+	    move(LINES-3, x-1);
 	    addch(' ');
-	    move(LINES-2, x);
+	    move(LINES-3, x);
 	    addch('|');
-	    move(LINES-2, x+1);
+	    move(LINES-3, x+1);
 	    addch(' ');
    	    refresh();
 	pthread_mutex_unlock(&mxCurses);
@@ -167,12 +200,18 @@ void drawUser(int x) {
 void launchRocket(Rocket r[], pthread_t th[], int x) {
 	int i;
 
+	/* out of rockets? */
+	if (ROCKETS <= 0)
+		return;
+
+	/* make new rocket */
 	pthread_mutex_lock(&mxRockets);
-	    for (i=0; i<MAX_ROCKETS; i++) {
+	    for (i=0; i<MAX_ROCKETS_T; i++) {
 		if (!r[i].alive) {
+			ROCKETS--;
 			r[i].alive = 1;
 			r[i].x = x;
-			r[i].y = LINES-3;
+			r[i].y = LINES-4;
 			if (pthread_create(&th[i], NULL, animateRocket, &r[i])) {
 				fprintf(stderr, "error creating thread");
 				endwin();
@@ -297,6 +336,8 @@ void *animateSaucer(void *saucer) {
 		for (i=0; i<=(s->veloc); i++) {
 			if (checkForRocket(i+x,y)) {
 				s->alive = 0;
+				HITS++;
+				ROCKETS += ROCKETS_ON_HIT;
 				killRocketAt(i+x,y);
 				pthread_exit(NULL);
 			}
@@ -355,7 +396,10 @@ void killSaucerAt(int x, int y) {
 	    for (i=0; i<MAX_SAUCERS; i++) {
 		for (n=x-5; n<=x+5; n++) {
 			if (saucers[i].x==n && saucers[i].y==y) {
-				if(saucers[i].alive==1)HITS++;
+				if(saucers[i].alive==1) {
+					HITS++;
+					ROCKETS += ROCKETS_ON_HIT;
+				}
 				saucers[i].alive = 0;
 			}
 		}
@@ -365,14 +409,25 @@ void killSaucerAt(int x, int y) {
 void killRocketAt(int x, int y) {
 	int i;
 	pthread_mutex_lock(&mxRockets);
-	    for (i=0; i<MAX_ROCKETS; i++) {
+	    for (i=0; i<MAX_ROCKETS_T; i++) {
 		if (rockets[i].x==x && rockets[i].y==y) {
 			rockets[i].alive = 0;
 		}
 	    }
 	pthread_mutex_unlock(&mxRockets);
 }
+int countRocketsLiving() {
+	int i, c;
 
+	pthread_mutex_lock(&mxRockets);
+		c=0;
+		for (i=0; i<MAX_ROCKETS_T; i++) {
+			if (rockets[i].alive == 1)
+				c++;
+		}
+	pthread_mutex_unlock(&mxRockets);
+	return c;
+}
 
 
 
